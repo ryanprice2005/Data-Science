@@ -1,5 +1,5 @@
 - 👋 Hi, I’m @ryanprice2005
-- 👀 I’m interested in ... Data Science and Music
+- 👀 I’m interested in ... Data Science and Information Technology
 - 🌱 I’m currently learning ... Programming in Python
 - 💞️ I’m looking to collaborate on ...projects
 - 📫 How to reach me ...My email
