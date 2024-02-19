@@ -2,7 +2,7 @@
 - 👀 I’m interested in ... Data Science and Information Technology
 - 🌱 I’m currently learning ... Programming in Python
 - 💞️ I’m looking to collaborate on ...projects
-- 📫 How to reach me ...My email
+- 📫 How to reach me ...My email ryanprice2005@yahoo.com
 
 <!---
 ryanprice2005/ryanprice2005 is a ✨ special ✨ repository because its `README.md` (this file) appears on your GitHub profile.
