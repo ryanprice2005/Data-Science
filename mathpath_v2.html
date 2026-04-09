@@ -1116,6 +1116,140 @@ footer::before {
 /* ── SELECTION ── */
 ::selection { background: var(--ac-md); color: var(--tx) }
 
+
+/* ── DOWNLOAD PLAN BUTTON ── */
+.btn-download {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--f3);
+  background: transparent;
+  border: 1px solid var(--ac-md);
+  color: var(--ac);
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: .85rem;
+  padding: var(--f3) var(--f6);
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: all var(--transition);
+  letter-spacing: .01em;
+  text-decoration: none;
+}
+.btn-download:hover {
+  background: var(--ac-lo);
+  border-color: var(--ac);
+  transform: translateY(-1px);
+  box-shadow: 0 0 var(--f6) rgba(0,207,255,.12);
+}
+.btn-download svg {
+  flex-shrink: 0;
+}
+
+/* ── PLAN PREVIEW PANEL ── */
+.plan-preview {
+  display: none;
+  margin-top: var(--f7);
+  background: var(--bg-2);
+  border: 1px solid var(--bd-1);
+  border-radius: var(--radius-md);
+  overflow: hidden;
+}
+.plan-preview.open { display: block }
+.plan-preview-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--f4) var(--f6);
+  background: var(--bg-1);
+  border-bottom: 1px solid var(--bd-0);
+}
+.plan-preview-header h4 {
+  font-family: var(--font-mono);
+  font-size: .7rem;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: var(--tx-2);
+}
+.plan-preview-actions {
+  display: flex;
+  gap: var(--f3);
+  align-items: center;
+}
+.plan-fmt-btn {
+  font-family: var(--font-mono);
+  font-size: .65rem;
+  padding: var(--f1) var(--f4);
+  border-radius: 20px;
+  border: 1px solid var(--bd-1);
+  background: transparent;
+  color: var(--tx-2);
+  cursor: pointer;
+  transition: all var(--transition);
+  letter-spacing: .05em;
+}
+.plan-fmt-btn.active,
+.plan-fmt-btn:hover {
+  border-color: var(--ac);
+  color: var(--ac);
+  background: var(--ac-lo);
+}
+.plan-dl-btn {
+  font-family: var(--font-body);
+  font-size: .8rem;
+  font-weight: 600;
+  padding: var(--f2) var(--f5);
+  border-radius: var(--radius-sm);
+  border: none;
+  background: var(--ac);
+  color: var(--bg);
+  cursor: pointer;
+  transition: all var(--transition);
+  display: flex;
+  align-items: center;
+  gap: var(--f2);
+}
+.plan-dl-btn:hover { filter: brightness(1.1) }
+.plan-body {
+  padding: var(--f6);
+  max-height: 440px;
+  overflow-y: auto;
+  font-family: var(--font-mono);
+  font-size: .78rem;
+  line-height: 1.75;
+  color: var(--tx-2);
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.plan-body.html-preview {
+  font-family: var(--font-body);
+  white-space: normal;
+}
+/* Weak section badge in preview */
+.weak-tag {
+  display: inline-block;
+  background: var(--err-lo);
+  color: var(--err);
+  border: 1px solid var(--err-bd);
+  font-family: var(--font-mono);
+  font-size: .62rem;
+  padding: var(--f1) var(--f3);
+  border-radius: 10px;
+  margin-left: var(--f2);
+  vertical-align: middle;
+}
+.ok-tag {
+  display: inline-block;
+  background: var(--ok-lo);
+  color: var(--ok);
+  border: 1px solid var(--ok-bd);
+  font-family: var(--font-mono);
+  font-size: .62rem;
+  padding: var(--f1) var(--f3);
+  border-radius: 10px;
+  margin-left: var(--f2);
+  vertical-align: middle;
+}
+
 </style>
 
 </head>
@@ -1427,9 +1561,33 @@ footer::before {
           <div class="mt-q-review-title">&#x1F4CB; Full Answer Review</div>
           <div id="mtrReviewList"></div>
         </div>
-        <div style="text-align:center;margin-top:2rem;display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap">
+        <div style="text-align:center;margin-top:2rem;display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap;align-items:center">
           <button class="mt-btn-restart" onclick="restartMathTest()">&#x21BA; Retake the Test</button>
-          <a href="#explore" class="mt-btn-next" style="text-decoration:none;padding:.62rem 1.7rem;border-radius:5px;font-family:'Epilogue',sans-serif;font-weight:700;font-size:.86rem">Browse All Careers &rarr;</a>
+          <a href="#explore" class="mt-btn-next" style="text-decoration:none;padding:.62rem 1.7rem;border-radius:5px;font-family:var(--font-body);font-weight:700;font-size:.86rem">Browse All Careers &rarr;</a>
+          <button class="btn-download" onclick="togglePlanPreview()">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M7 1v8M4 6l3 3 3-3M2 11h10"/>
+            </svg>
+            Download Learning Plan
+          </button>
+        </div>
+
+        <!-- PLAN PREVIEW PANEL -->
+        <div class="plan-preview" id="planPreview">
+          <div class="plan-preview-header">
+            <h4>Learning Plan Preview</h4>
+            <div class="plan-preview-actions">
+              <button class="plan-fmt-btn active" id="fmtMd" onclick="switchFormat('md')">Markdown</button>
+              <button class="plan-fmt-btn" id="fmtHtml" onclick="switchFormat('html')">HTML</button>
+              <button class="plan-dl-btn" onclick="downloadPlan()">
+                <svg width="12" height="12" viewBox="0 0 14 14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M7 1v8M4 6l3 3 3-3M2 11h10"/>
+                </svg>
+                Save file
+              </button>
+            </div>
+          </div>
+          <div class="plan-body" id="planBody"></div>
         </div>
       </div>
     </div>
@@ -3351,6 +3509,433 @@ function showMTResults() {
     const aT = q.opts[q.ans]?q.opts[q.ans].substring(3):'\u2014';
     return '<div class="review-item"><span>'+(a.correct?'\u2705':'\u274c')+'</span><div style="flex:1"><div class="review-q">'+q.q+'</div><div class="review-a '+(a.correct?'review-correct':'review-wrong')+'">'+(a.correct?'Correct: ':'Your answer: ')+cT+(!a.correct?' <span style="color:var(--ok)">Correct: '+aT+'</span>':'')+'</div><div style="font-size:.68rem;color:var(--tx-3);margin-top:var(--f1);font-family:var(--font-mono)">'+q.skill+'</div></div></div>';
   }).join('');
+}
+
+
+/* ═══════════════════════════════════════════════
+   LEARNING PLAN GENERATOR
+═══════════════════════════════════════════════ */
+
+// Map test sections → TOPICS keys (null = no detailed roadmap)
+const SECTION_TO_TOPIC = {
+  'Arithmetic':      null,
+  'Algebra':         'algebra',
+  'Logic & Binary':  'logic',
+  'Statistics':      'statistics',
+  'Derivatives':     'calculus',
+  'Integrals':       'calculus',
+  'Applied CS Math': null
+};
+
+// Compute per-section scores from current test state
+function getSectionScores() {
+  const dSecs = ['Arithmetic','Algebra','Logic & Binary','Statistics','Derivatives','Integrals','Applied CS Math'];
+  return dSecs.map(ds => {
+    const idxs = MT_QUESTIONS.reduce((a, q, i) => { if (q.section === ds) a.push(i); return a; }, []);
+    const correct = idxs.filter(i => mtState.answers[i] && mtState.answers[i].correct).length;
+    const total = idxs.length;
+    const pct = total ? Math.round((correct / total) * 100) : null;
+    return { section: ds, correct, total, pct, isWeak: pct !== null && pct < 50 };
+  }).filter(s => s.total > 0);
+}
+
+// Strip HTML tags for plain-text / markdown output
+function stripHtml(str) {
+  return str.replace(/<[^>]*>/g, '').replace(/&amp;/g,'&').replace(/&lt;/g,'<').replace(/&gt;/g,'>').replace(/&mdash;/g,'—').replace(/&ndash;/g,'–').replace(/&nbsp;/g,' ');
+}
+
+let _planFormat = 'md'; // 'md' or 'html'
+
+function togglePlanPreview() {
+  const panel = document.getElementById('planPreview');
+  if (panel.classList.contains('open')) {
+    panel.classList.remove('open');
+    return;
+  }
+  panel.classList.add('open');
+  renderPlanPreview('md');
+  panel.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+}
+
+function switchFormat(fmt) {
+  _planFormat = fmt;
+  document.getElementById('fmtMd').classList.toggle('active', fmt === 'md');
+  document.getElementById('fmtHtml').classList.toggle('active', fmt === 'html');
+  renderPlanPreview(fmt);
+}
+
+function renderPlanPreview(fmt) {
+  const body = document.getElementById('planBody');
+  if (fmt === 'html') {
+    body.classList.add('html-preview');
+    body.innerHTML = buildHtmlPlanContent(true); // true = preview mode (no full page wrap)
+  } else {
+    body.classList.remove('html-preview');
+    body.textContent = buildMarkdownPlan();
+  }
+}
+
+function downloadPlan() {
+  if (_planFormat === 'html') {
+    const blob = new Blob([buildHtmlPlanContent(false)], { type: 'text/html;charset=utf-8' });
+    triggerDownload(blob, 'mathpath-learning-plan.html');
+  } else {
+    const blob = new Blob([buildMarkdownPlan()], { type: 'text/markdown;charset=utf-8' });
+    triggerDownload(blob, 'mathpath-learning-plan.md');
+  }
+}
+
+function triggerDownload(blob, filename) {
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+// ── MARKDOWN BUILDER ──────────────────────────────────────────────────────
+function buildMarkdownPlan() {
+  const score = mtState.answers.filter(a => a.correct).length;
+  const total = MT_QUESTIONS.length;
+  const pct = Math.round((score / total) * 100);
+  const guide = MT_SCORE_GUIDE.find(g => score >= g.min && score <= g.max) || MT_SCORE_GUIDE[3];
+  const sectionScores = getSectionScores();
+  const weakSections = sectionScores.filter(s => s.isWeak);
+  const date = new Date().toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' });
+
+  let md = '';
+  md += `# MathPath — Personalized Learning Plan\n`;
+  md += `_Generated ${date}_\n\n`;
+  md += `---\n\n`;
+
+  // Score summary
+  md += `## Your Test Results\n\n`;
+  md += `| | |\n|---|---|\n`;
+  md += `| **Score** | ${score} / ${total} (${pct}%) |\n`;
+  md += `| **Level** | ${guide.level} |\n`;
+  md += `| **Assessment** | ${guide.title} |\n\n`;
+
+  // Section breakdown
+  md += `### Section Breakdown\n\n`;
+  md += `| Section | Score | Status |\n|---|---|---|\n`;
+  sectionScores.forEach(s => {
+    const status = s.isWeak ? '⚠ Needs work' : '✓ Good';
+    md += `| ${s.section} | ${s.correct}/${s.total} (${s.pct}%) | ${status} |\n`;
+  });
+  md += `\n`;
+
+  // Career matches
+  md += `### Recommended Career Paths\n\n`;
+  guide.careers.forEach(id => {
+    const c = CAREERS.find(x => x.id === id);
+    if (!c) return;
+    md += `- **${c.title}** — ${c.salary}/yr · ${c.type === 'low' ? 'Low Math' : 'High Math'}\n`;
+    md += `  [View on O*NET](${c.url})\n`;
+  });
+  md += `\n---\n\n`;
+
+  // Next steps from guide
+  md += `## Your Next Steps\n\n`;
+  md += stripHtml(guide.nextSteps) + '\n\n---\n\n';
+
+  // Priority learning plan for weak sections
+  if (weakSections.length === 0) {
+    md += `## Learning Plan\n\n`;
+    md += `> **No weak sections detected.** Your scores are strong across all areas.\n`;
+    md += `> Focus on deepening your strongest topics and applying skills through projects.\n\n`;
+  } else {
+    md += `## Priority Learning Plan\n\n`;
+    md += `> The following ${weakSections.length} section${weakSections.length > 1 ? 's' : ''} scored below 50% and need the most attention.\n\n`;
+
+    const seenTopics = new Set();
+    weakSections.forEach(ws => {
+      md += `### ⚠ ${ws.section} — ${ws.correct}/${ws.total} (${ws.pct}%)\n\n`;
+      const topicKey = SECTION_TO_TOPIC[ws.section];
+
+      if (topicKey && TOPICS[topicKey] && !seenTopics.has(topicKey)) {
+        seenTopics.add(topicKey);
+        const t = TOPICS[topicKey];
+        md += `**Topic:** ${t.label}  \n`;
+        md += `**Tagline:** ${t.tagline}  \n`;
+        md += `**Estimated time:** ${t.timeTotal}  \n`;
+        md += `**Difficulty:** ${t.difficulty}  \n\n`;
+        md += `${t.intro}\n\n`;
+
+        t.steps.forEach(step => {
+          md += `#### Step ${step.num}: ${step.title}\n\n`;
+          md += `${step.desc}\n\n`;
+          md += `**Estimated time:** ${step.time}  \n`;
+          md += `**Key concepts:** ${step.concepts.join(', ')}\n\n`;
+          md += `**Resources:**\n\n`;
+          step.resources.forEach(r => {
+            const typeLabel = r.type === 'free' ? 'Free' : r.type === 'paid' ? 'Paid' : 'Book';
+            md += `- [${r.name}](${r.url}) _(${typeLabel})_ — ${r.desc}\n`;
+          });
+          md += `\n`;
+        });
+
+        if (t.tip) {
+          md += `> **${stripHtml(t.tip.label)}:** ${stripHtml(t.tip.text)}\n\n`;
+        }
+      } else if (topicKey && seenTopics.has(topicKey)) {
+        md += `_Roadmap covered above under **${TOPICS[topicKey].label}**._\n\n`;
+      } else {
+        // Arithmetic or Applied CS Math — no full topic entry, give targeted advice
+        if (ws.section === 'Arithmetic') {
+          md += `**Resources to strengthen Arithmetic:**\n\n`;
+          md += `- [Khan Academy — Arithmetic](https://www.khanacademy.org/math/arithmetic) _(Free)_ — Comprehensive arithmetic review from fractions to percentages.\n`;
+          md += `- [Math is Fun — Numbers](https://www.mathsisfun.com/numbers/index.html) _(Free)_ — Plain-English reference, no login required.\n`;
+          md += `- [Prealgebra (OpenStax)](https://openstax.org/books/prealgebra-2e/pages/1-introduction) _(Free)_ — Free textbook with exercises, covers all arithmetic foundations.\n\n`;
+        } else if (ws.section === 'Applied CS Math') {
+          md += `**Resources to strengthen Applied CS Math:**\n\n`;
+          md += `- [CS50 — Introduction to Computer Science (Harvard)](https://cs50.harvard.edu/x/) _(Free)_ — The best intro to computational thinking. Covers Big-O, binary, algorithms.\n`;
+          md += `- [Algorithms (Coursera — Stanford)](https://www.coursera.org/specializations/algorithms) _(Free to audit)_ — Covers time complexity, sorting, graph algorithms in depth.\n`;
+          md += `- [The Algorithm Design Manual — Skiena](https://www.algorist.com/) _(Book)_ — Practical algorithms book with real-world context. Classic reference.\n\n`;
+        }
+      }
+    });
+  }
+
+  // Strong sections — brief acknowledgment
+  const strongSections = sectionScores.filter(s => !s.isWeak);
+  if (strongSections.length) {
+    md += `---\n\n## Strong Areas — Keep Going\n\n`;
+    strongSections.forEach(s => {
+      md += `- **${s.section}**: ${s.correct}/${s.total} (${s.pct}%) — solid foundation.\n`;
+    });
+    md += `\n`;
+  }
+
+  md += `---\n\n`;
+  md += `_Plan generated by [MathPath](https://mathpath.app) · Powered by O\\*NET U.S. Dept. of Labor_\n`;
+  return md;
+}
+
+// ── HTML BUILDER ──────────────────────────────────────────────────────────
+function buildHtmlPlanContent(previewMode) {
+  const score = mtState.answers.filter(a => a.correct).length;
+  const total = MT_QUESTIONS.length;
+  const pct = Math.round((score / total) * 100);
+  const guide = MT_SCORE_GUIDE.find(g => score >= g.min && score <= g.max) || MT_SCORE_GUIDE[3];
+  const sectionScores = getSectionScores();
+  const weakSections = sectionScores.filter(s => s.isWeak);
+  const date = new Date().toLocaleDateString('en-US', { year:'numeric', month:'long', day:'numeric' });
+
+  const levelColor = { 'Advanced':'#00E87A', 'Proficient':'#00CFFF', 'Developing':'#F0A030', 'Foundational':'#5090D0' }[guide.level] || '#00CFFF';
+
+  // Color for section score bars
+  function barColor(pct) {
+    if (pct >= 75) return '#00E87A';
+    if (pct >= 50) return '#00CFFF';
+    if (pct >= 25) return '#F0A030';
+    return '#FF3A5C';
+  }
+
+  const css = `
+    * { margin:0; padding:0; box-sizing:border-box }
+    body { font-family: 'Segoe UI', system-ui, sans-serif; background:#030508; color:#bccfe0; line-height:1.6; }
+    a { color:#00CFFF; text-decoration:none }
+    a:hover { text-decoration:underline }
+    .page { max-width:780px; margin:0 auto; padding:2.5rem 2rem }
+    .header { border-bottom:1px solid #162438; padding-bottom:2rem; margin-bottom:2rem }
+    .logo { font-size:.7rem; letter-spacing:.25em; text-transform:uppercase; color:#4a6882; font-family:monospace; margin-bottom:1rem }
+    .logo span { color:#00CFFF }
+    h1 { font-size:2rem; font-weight:700; color:#e8f4ff; letter-spacing:-.02em; margin-bottom:.4rem }
+    .date { font-size:.78rem; color:#4a6882; font-family:monospace }
+    .score-row { display:flex; align-items:center; gap:1.5rem; background:#0b1220; border:1px solid #162438; border-radius:12px; padding:1.5rem; margin-bottom:2rem }
+    .score-ring { position:relative; width:88px; height:88px; flex-shrink:0 }
+    .score-ring svg { transform:rotate(-90deg) }
+    .ring-num { position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center }
+    .ring-big { font-size:1.6rem; font-weight:700; color:#e8f4ff; line-height:1 }
+    .ring-out { font-size:.6rem; color:#4a6882; font-family:monospace }
+    .score-info h2 { font-size:1.3rem; font-weight:700; color:#e8f4ff; margin-bottom:.3rem }
+    .score-info p { font-size:.86rem; color:#4a6882; line-height:1.6 }
+    .level-badge { display:inline-block; font-family:monospace; font-size:.7rem; font-weight:600; padding:.25rem .8rem; border-radius:20px; margin-bottom:.5rem }
+    h2.section-title { font-size:1rem; font-weight:700; color:#e8f4ff; letter-spacing:.04em; text-transform:uppercase; font-family:monospace; margin:2rem 0 1rem; padding-bottom:.5rem; border-bottom:1px solid #162438 }
+    .breakdown { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:.65rem; margin-bottom:2rem }
+    .breakdown-item { background:#0b1220; border:1px solid #162438; border-radius:8px; padding:.9rem 1rem }
+    .breakdown-item .name { font-size:.78rem; color:#4a6882; margin-bottom:.4rem; font-family:monospace }
+    .breakdown-item .score-text { font-size:.9rem; font-weight:600; color:#e8f4ff; margin-bottom:.4rem }
+    .bar-track { height:3px; background:#162438; border-radius:2px; overflow:hidden }
+    .bar-fill { height:100%; border-radius:2px }
+    .status-tag { display:inline-block; font-family:monospace; font-size:.6rem; font-weight:600; padding:.12rem .5rem; border-radius:10px; margin-top:.35rem }
+    .weak-st { background:rgba(255,58,92,.12); color:#FF3A5C; border:1px solid rgba(255,58,92,.25) }
+    .ok-st   { background:rgba(0,232,122,.08); color:#00E87A; border:1px solid rgba(0,232,122,.22) }
+    .careers-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(220px,1fr)); gap:.65rem; margin-bottom:2rem }
+    .career-chip { background:#0b1220; border:1px solid #162438; border-radius:8px; padding:.85rem 1rem }
+    .career-chip .title { font-size:.9rem; font-weight:600; color:#e8f4ff; margin-bottom:.25rem }
+    .career-chip .sal { font-family:monospace; font-size:.7rem; color:#00E87A }
+    .next-steps { background:rgba(0,207,255,.05); border:1px solid rgba(0,207,255,.18); border-radius:8px; padding:1.1rem 1.25rem; margin-bottom:2rem; font-size:.86rem; line-height:1.75; color:#bccfe0 }
+    .next-steps strong { color:#00CFFF }
+    .topic-block { background:#0b1220; border:1px solid #162438; border-radius:12px; padding:1.5rem; margin-bottom:1.5rem; border-left:3px solid }
+    .topic-block h3 { font-size:1.1rem; font-weight:700; color:#e8f4ff; margin-bottom:.25rem }
+    .topic-meta { font-family:monospace; font-size:.68rem; color:#4a6882; margin-bottom:.75rem }
+    .topic-intro { font-size:.86rem; color:#7a9ab8; line-height:1.75; margin-bottom:1.25rem }
+    .step { margin-bottom:1.25rem; padding-left:1rem; border-left:1px solid #1e3250 }
+    .step h4 { font-size:.9rem; font-weight:600; color:#e8f4ff; margin-bottom:.2rem }
+    .step p  { font-size:.82rem; color:#4a6882; line-height:1.65; margin-bottom:.5rem }
+    .step .concepts { font-family:monospace; font-size:.68rem; color:#5090D0; margin-bottom:.55rem }
+    .resources { display:flex; flex-direction:column; gap:.35rem }
+    .resource { display:flex; align-items:baseline; gap:.5rem; font-size:.8rem }
+    .resource a { color:#00CFFF }
+    .resource .rtype { font-family:monospace; font-size:.62rem; padding:.1rem .4rem; border-radius:8px; flex-shrink:0 }
+    .rt-free { background:rgba(0,232,122,.1); color:#00E87A; border:1px solid rgba(0,232,122,.2) }
+    .rt-paid { background:rgba(240,160,48,.1); color:#F0A030; border:1px solid rgba(240,160,48,.2) }
+    .rt-book { background:rgba(80,144,208,.1); color:#5090D0; border:1px solid rgba(80,144,208,.2) }
+    .tip-box { background:rgba(0,207,255,.04); border:1px solid rgba(0,207,255,.15); border-radius:8px; padding:.9rem 1.1rem; margin-top:1rem; font-size:.82rem; color:#7a9ab8; line-height:1.7 }
+    .tip-box strong { color:#bccfe0 }
+    .section-header-weak { display:flex; align-items:center; gap:.65rem; margin-bottom:1rem }
+    .section-header-weak h2 { margin:0; border:none; padding:0 }
+    .warn-badge { font-family:monospace; font-size:.62rem; background:rgba(255,58,92,.12); color:#FF3A5C; border:1px solid rgba(255,58,92,.25); padding:.15rem .55rem; border-radius:10px; font-weight:600 }
+    .strong-list { background:#0b1220; border:1px solid #162438; border-radius:8px; padding:1rem 1.25rem }
+    .strong-list li { list-style:none; font-size:.84rem; color:#4a6882; padding:.25rem 0; border-bottom:1px solid #0e1928 }
+    .strong-list li:last-child { border-bottom:none }
+    .strong-list li strong { color:#00E87A }
+    footer { text-align:center; margin-top:3rem; padding-top:1.5rem; border-top:1px solid #162438; font-family:monospace; font-size:.65rem; color:#4a6882 }
+  `;
+
+  // Build section score items HTML
+  const breakdownHtml = sectionScores.map(s => `
+    <div class="breakdown-item">
+      <div class="name">${s.section}</div>
+      <div class="score-text">${s.correct}/${s.total} — ${s.pct}%</div>
+      <div class="bar-track"><div class="bar-fill" style="width:${s.pct}%;background:${barColor(s.pct)}"></div></div>
+      <span class="status-tag ${s.isWeak ? 'weak-st' : 'ok-st'}">${s.isWeak ? '⚠ Needs work' : '✓ Good'}</span>
+    </div>`).join('');
+
+  // Career chips
+  const careersHtml = guide.careers.map(id => {
+    const c = CAREERS.find(x => x.id === id);
+    if (!c) return '';
+    return `<div class="career-chip"><div class="title">${c.title}</div><div class="sal">${c.salary}/yr · ${c.type === 'low' ? 'Low Math' : 'High Math'}</div><div style="margin-top:.35rem"><a href="${c.url}" target="_blank" style="font-family:monospace;font-size:.65rem;color:#4a6882">O*NET ${c.onet} ↗</a></div></div>`;
+  }).join('');
+
+  // Score ring SVG
+  const r = 38, circ = 2 * Math.PI * r;
+  const dashOffset = circ - (pct / 100) * circ;
+  const ringColor = levelColor;
+
+  const ringHtml = `
+    <div class="score-ring">
+      <svg width="88" height="88" viewBox="0 0 88 88">
+        <circle cx="44" cy="44" r="${r}" fill="none" stroke="#162438" stroke-width="8"/>
+        <circle cx="44" cy="44" r="${r}" fill="none" stroke="${ringColor}" stroke-width="8"
+          stroke-linecap="round" stroke-dasharray="${circ.toFixed(1)}" stroke-dashoffset="${dashOffset.toFixed(1)}"/>
+      </svg>
+      <div class="ring-num"><span class="ring-big">${score}</span><span class="ring-out">/ ${total}</span></div>
+    </div>`;
+
+  // Weak section topic blocks
+  let planSectionsHtml = '';
+  const seenTopics = new Set();
+  if (weakSections.length === 0) {
+    planSectionsHtml = `<div style="background:rgba(0,232,122,.06);border:1px solid rgba(0,232,122,.2);border-radius:8px;padding:1.1rem 1.25rem;color:#7a9ab8;font-size:.86rem;line-height:1.7">
+      <strong style="color:#00E87A">No weak sections detected.</strong> Your scores are strong across all areas. Focus on applying your skills through real projects — Kaggle, GitHub, and open-source contributions.
+    </div>`;
+  } else {
+    weakSections.forEach(ws => {
+      const topicKey = SECTION_TO_TOPIC[ws.section];
+      planSectionsHtml += `<div class="section-header-weak">
+        <h2 class="section-title" style="margin:0;border:none;padding:0">${ws.section}</h2>
+        <span class="warn-badge">${ws.correct}/${ws.total} · ${ws.pct}%</span>
+      </div>`;
+
+      if (topicKey && TOPICS[topicKey] && !seenTopics.has(topicKey)) {
+        seenTopics.add(topicKey);
+        const t = TOPICS[topicKey];
+        const tColor = topicColors[topicKey] || levelColor;
+        planSectionsHtml += `<div class="topic-block" style="border-left-color:${tColor}">
+          <h3>${t.label}</h3>
+          <div class="topic-meta">Est. time: ${t.timeTotal} · Difficulty: ${t.difficulty} · Used by: ${t.careersUsing.slice(0,3).join(', ')}…</div>
+          <div class="topic-intro">${t.intro}</div>`;
+        t.steps.forEach(step => {
+          const resHtml = step.resources.map(r => {
+            const cls = r.type === 'free' ? 'rt-free' : r.type === 'paid' ? 'rt-paid' : 'rt-book';
+            const lbl = r.type === 'free' ? 'Free' : r.type === 'paid' ? 'Paid' : 'Book';
+            return `<div class="resource"><span class="rtype ${cls}">${lbl}</span><a href="${r.url}" target="_blank">${r.name}</a><span style="color:#4a6882;font-size:.76rem"> — ${r.desc}</span></div>`;
+          }).join('');
+          planSectionsHtml += `<div class="step">
+            <h4>Step ${step.num}: ${step.title}</h4>
+            <p>${step.desc}</p>
+            <div class="concepts">Concepts: ${step.concepts.join(' · ')} · Time: ${step.time}</div>
+            <div class="resources">${resHtml}</div>
+          </div>`;
+        });
+        if (t.tip) {
+          planSectionsHtml += `<div class="tip-box"><strong>${t.tip.label}:</strong> ${t.tip.text}</div>`;
+        }
+        planSectionsHtml += `</div>`;
+
+      } else if (topicKey && seenTopics.has(topicKey)) {
+        planSectionsHtml += `<p style="font-size:.84rem;color:#4a6882;margin-bottom:1.5rem;font-style:italic">Roadmap already covered above under <strong style="color:#bccfe0">${TOPICS[topicKey].label}</strong>.</p>`;
+      } else {
+        // Fallback for Arithmetic / Applied CS Math
+        let fallbackResources = '';
+        if (ws.section === 'Arithmetic') {
+          fallbackResources = `
+            <div class="resource"><span class="rtype rt-free">Free</span><a href="https://www.khanacademy.org/math/arithmetic" target="_blank">Khan Academy — Arithmetic</a><span style="color:#4a6882;font-size:.76rem"> — Comprehensive review from fractions to percentages.</span></div>
+            <div class="resource"><span class="rtype rt-free">Free</span><a href="https://www.mathsisfun.com/numbers/index.html" target="_blank">Math is Fun — Numbers</a><span style="color:#4a6882;font-size:.76rem"> — Plain-English reference, no login required.</span></div>
+            <div class="resource"><span class="rtype rt-free">Free</span><a href="https://openstax.org/books/prealgebra-2e/pages/1-introduction" target="_blank">Prealgebra (OpenStax)</a><span style="color:#4a6882;font-size:.76rem"> — Free textbook covering all arithmetic foundations.</span></div>`;
+        } else {
+          fallbackResources = `
+            <div class="resource"><span class="rtype rt-free">Free</span><a href="https://cs50.harvard.edu/x/" target="_blank">CS50 — Harvard</a><span style="color:#4a6882;font-size:.76rem"> — Best intro to computational thinking, Big-O, binary, algorithms.</span></div>
+            <div class="resource"><span class="rtype rt-free">Free to audit</span><a href="https://www.coursera.org/specializations/algorithms" target="_blank">Algorithms — Stanford (Coursera)</a><span style="color:#4a6882;font-size:.76rem"> — Covers complexity, sorting, graph algorithms.</span></div>
+            <div class="resource"><span class="rtype rt-book">Book</span><a href="https://www.algorist.com/" target="_blank">The Algorithm Design Manual</a><span style="color:#4a6882;font-size:.76rem"> — Practical algorithms with real-world context.</span></div>`;
+        }
+        planSectionsHtml += `<div class="topic-block" style="border-left-color:#F0A030;margin-bottom:1.5rem">
+          <h3>${ws.section}</h3>
+          <div class="topic-meta">Targeted resources for this section</div>
+          <div class="resources">${fallbackResources}</div>
+        </div>`;
+      }
+    });
+  }
+
+  // Strong sections
+  const strongSections = sectionScores.filter(s => !s.isWeak);
+  const strongHtml = strongSections.length ? `
+    <h2 class="section-title">Strong Areas</h2>
+    <ul class="strong-list">
+      ${strongSections.map(s => `<li><strong>${s.section}</strong> — ${s.correct}/${s.total} (${s.pct}%) · solid foundation.</li>`).join('')}
+    </ul>` : '';
+
+  const bodyContent = `
+    <div class="page">
+      <div class="header">
+        <div class="logo">Math<span>Path</span> · Powered by O*NET</div>
+        <h1>Your Learning Plan</h1>
+        <div class="date">Generated ${date}</div>
+      </div>
+
+      <h2 class="section-title">Test Results</h2>
+      <div class="score-row">
+        ${ringHtml}
+        <div class="score-info">
+          <span class="level-badge" style="background:${levelColor}22;color:${levelColor};border:1px solid ${levelColor}44">${guide.level}</span>
+          <h2>${guide.title}</h2>
+          <p>${guide.desc}</p>
+        </div>
+      </div>
+
+      <h2 class="section-title">Section Breakdown</h2>
+      <div class="breakdown">${breakdownHtml}</div>
+
+      <h2 class="section-title">Recommended Careers</h2>
+      <div class="careers-grid">${careersHtml}</div>
+
+      <h2 class="section-title">Next Steps</h2>
+      <div class="next-steps">${guide.nextSteps}</div>
+
+      <h2 class="section-title">Priority Learning Plan</h2>
+      ${planSectionsHtml}
+
+      ${strongHtml}
+
+      <footer>MathPath Learning Plan · Powered by O*NET U.S. Dept. of Labor · mathpath.app</footer>
+    </div>`;
+
+  if (previewMode) return bodyContent;
+  return `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>MathPath Learning Plan</title><style>${css}</style></head><body>${bodyContent}</body></html>`;
 }
 
 function restartMathTest() {
