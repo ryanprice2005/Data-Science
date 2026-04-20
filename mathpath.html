@@ -1250,6 +1250,76 @@ footer::before {
   vertical-align: middle;
 }
 
+
+/* ── SALARY DATA-SOURCE BADGE ── */
+.sal-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--f2);
+  font-family: var(--font-mono);
+  font-size: .57rem;
+  letter-spacing: .06em;
+  color: var(--tx-3);
+  background: var(--bg-2);
+  border: 1px solid var(--bd-0);
+  padding: var(--f1) var(--f3);
+  border-radius: var(--f3);
+  text-decoration: none;
+  transition: all var(--transition);
+  vertical-align: middle;
+  margin-top: var(--f2);
+  white-space: nowrap;
+}
+.sal-badge:hover {
+  border-color: var(--ok-bd);
+  color: var(--ok);
+  background: var(--ok-lo);
+}
+.sal-badge::before {
+  content: '';
+  display: inline-block;
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--ok);
+  flex-shrink: 0;
+}
+
+/* ── MODAL DATA ROW (OES + O*NET links) ── */
+.modal-sources {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--f3);
+  margin-bottom: var(--f5);
+}
+.modal-src-link {
+  font-family: var(--font-mono);
+  font-size: .62rem;
+  color: var(--tx-2);
+  text-decoration: none;
+  padding: var(--f1) var(--f4);
+  border-radius: var(--f3);
+  border: 1px solid var(--bd-0);
+  background: var(--bg-2);
+  transition: all var(--transition);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--f2);
+}
+.modal-src-link:hover { border-color: var(--ac-md); color: var(--ac) }
+.modal-src-link.bls:hover { border-color: var(--ok-bd); color: var(--ok) }
+
+/* ── SALARY CELL — stack value + badge ── */
+.mstat-sal { display: flex; flex-direction: column; gap: var(--f2) }
+
+/* ── CARD-LEVEL SALARY SOURCE DOT (spectrum + explore cards) ── */
+.sal-src-dot {
+  font-family: var(--font-mono);
+  font-size: .58rem;
+  color: var(--tx-3);
+  margin-left: var(--f2);
+}
+
 </style>
 
 </head>
@@ -1608,7 +1678,7 @@ footer::before {
 </section>
 
 <footer>
-  <p>Career data from <a href="https://www.onetonline.org/" target="_blank">O*NET OnLine</a> by the U.S. Department of Labor, ETA. Licensed <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank">CC BY 4.0</a>. Salary figures are BLS 2024 median estimates.</p>
+  <p>Career data from <a href="https://www.onetonline.org/" target="_blank">O*NET OnLine</a> by the U.S. Department of Labor, ETA. Licensed <a href="https://creativecommons.org/licenses/by/4.0/" target="_blank">CC BY 4.0</a>. Salary figures are BLS OES 2024 median estimates — click any career for a direct source link.</p>
 </footer>
 
 <!-- MODAL -->
@@ -2296,13 +2366,34 @@ function renderSpectrum() {
 }
 
 /* ── MODAL ── */
+
+/* BLS OES URL from O*NET SOC — strips dash + .xx suffix */
+function blsUrl(onet) {
+  const soc = onet.replace('-','').split('.')[0]; // "15-1255.00" → "151255"
+  return `https://www.bls.gov/oes/current/oes${soc}.htm`;
+}
+const BLS_VINTAGE = 'BLS OES 2024';
+
 function openMod(c) {
   document.getElementById('mInner').innerHTML = `
-    <div class="monet">O*NET: ${c.onet} &nbsp;·&nbsp; <a href="${c.url}" target="_blank">View on onetonline.org ↗</a></div>
     <h2>${c.title}</h2>
+    <div class="modal-sources">
+      <a class="modal-src-link" href="${c.url}" target="_blank" title="O*NET occupation profile">
+        O*NET ${c.onet} ↗
+      </a>
+      <a class="modal-src-link bls" href="${blsUrl(c.onet)}" target="_blank" title="Bureau of Labor Statistics Occupational Employment & Wage Statistics">
+        BLS OES Wage Data ↗
+      </a>
+    </div>
     <p class="mdesc">${c.desc}</p>
     <div class="mgrid">
-      <div class="mstat"><label>Median Annual Salary</label><div class="mv g">${c.salary}</div></div>
+      <div class="mstat mstat-sal">
+        <label>Median Annual Salary</label>
+        <div class="mv g">${c.salary}</div>
+        <a class="sal-badge" href="${blsUrl(c.onet)}" target="_blank" title="View source data on BLS.gov">
+          ${BLS_VINTAGE} · Verify ↗
+        </a>
+      </div>
       <div class="mstat"><label>Job Outlook</label><div class="mv b">${c.outlook}</div></div>
       <div class="mstat"><label>Typical Education</label><div class="mv" style="font-size:1rem">${c.edu}</div></div>
       <div class="mstat"><label>Math Intensity</label><div class="mv v" style="font-size:1rem">${c.mathLevel}/100</div><div class="bar" style="margin-top:.45rem"><div class="bf ${c.type==='low'?'bfl':'bfh'}" style="width:${c.mathLevel}%"></div></div></div>
@@ -3935,7 +4026,77 @@ function buildHtmlPlanContent(previewMode) {
     </div>`;
 
   if (previewMode) return bodyContent;
-  return `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>MathPath Learning Plan</title><style>${css}</style></head><body>${bodyContent}</body></html>`;
+  return `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>MathPath Learning Plan</title><style>${css}
+/* ── SALARY DATA-SOURCE BADGE ── */
+.sal-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--f2);
+  font-family: var(--font-mono);
+  font-size: .57rem;
+  letter-spacing: .06em;
+  color: var(--tx-3);
+  background: var(--bg-2);
+  border: 1px solid var(--bd-0);
+  padding: var(--f1) var(--f3);
+  border-radius: var(--f3);
+  text-decoration: none;
+  transition: all var(--transition);
+  vertical-align: middle;
+  margin-top: var(--f2);
+  white-space: nowrap;
+}
+.sal-badge:hover {
+  border-color: var(--ok-bd);
+  color: var(--ok);
+  background: var(--ok-lo);
+}
+.sal-badge::before {
+  content: '';
+  display: inline-block;
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--ok);
+  flex-shrink: 0;
+}
+
+/* ── MODAL DATA ROW (OES + O*NET links) ── */
+.modal-sources {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--f3);
+  margin-bottom: var(--f5);
+}
+.modal-src-link {
+  font-family: var(--font-mono);
+  font-size: .62rem;
+  color: var(--tx-2);
+  text-decoration: none;
+  padding: var(--f1) var(--f4);
+  border-radius: var(--f3);
+  border: 1px solid var(--bd-0);
+  background: var(--bg-2);
+  transition: all var(--transition);
+  display: inline-flex;
+  align-items: center;
+  gap: var(--f2);
+}
+.modal-src-link:hover { border-color: var(--ac-md); color: var(--ac) }
+.modal-src-link.bls:hover { border-color: var(--ok-bd); color: var(--ok) }
+
+/* ── SALARY CELL — stack value + badge ── */
+.mstat-sal { display: flex; flex-direction: column; gap: var(--f2) }
+
+/* ── CARD-LEVEL SALARY SOURCE DOT (spectrum + explore cards) ── */
+.sal-src-dot {
+  font-family: var(--font-mono);
+  font-size: .58rem;
+  color: var(--tx-3);
+  margin-left: var(--f2);
+}
+
+</style></head><body>${bodyContent}</body></html>`;
 }
 
 function restartMathTest() {
