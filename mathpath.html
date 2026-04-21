@@ -1320,6 +1320,58 @@ footer::before {
   margin-left: var(--f2);
 }
 
+
+/* ── ADAPTIVE DIFFICULTY INDICATOR ── */
+.diff-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--f2);
+  font-family: var(--font-mono);
+  font-size: .6rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  padding: var(--f1) var(--f4);
+  border-radius: 20px;
+  border: 1px solid;
+  transition: all .4s ease;
+  font-weight: 600;
+}
+.diff-1 { color: var(--ok);  background: var(--ok-lo);  border-color: var(--ok-bd) }
+.diff-2 { color: var(--ac);  background: var(--ac-lo);  border-color: var(--ac-md) }
+.diff-3 { color: var(--err); background: var(--err-lo); border-color: var(--err-bd) }
+
+.diff-shift-toast {
+  position: fixed;
+  bottom: var(--f7);
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--bg-1);
+  border: var(--border-std);
+  border-radius: var(--radius-sm);
+  padding: var(--f3) var(--f6);
+  font-family: var(--font-mono);
+  font-size: .72rem;
+  color: var(--tx);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .3s, transform .3s;
+  z-index: 999;
+  white-space: nowrap;
+}
+.diff-shift-toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+.diff-shift-toast .dt-arrow { font-size: .9rem; margin: 0 var(--f2) }
+
+/* ── QUESTION META ROW ── */
+.mt-q-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--f4);
+}
+
 </style>
 
 </head>
@@ -1594,7 +1646,10 @@ footer::before {
       <div class="mt-test-view" id="mtTest">
         <div class="mt-prog-bar"><div class="mt-prog-fill" id="mtProgFill" style="width:0%"></div></div>
         <div class="mt-section-lbl" id="mtSectionLbl" style="color:var(--blue)">Section &mdash; Arithmetic</div>
-        <div class="mt-q-num" id="mtQNum">Question 1 of 37</div>
+        <div class="mt-q-meta">
+          <div class="mt-q-num" id="mtQNum">Question 1 of 37</div>
+          <span class="diff-badge diff-2" id="diffBadge">⬤ Medium</span>
+        </div>
         <div class="mt-question" id="mtQuestion"></div>
         <div class="mt-qhint" id="mtQHint"></div>
         <div class="mt-opts" id="mtOpts"></div>
@@ -3449,22 +3504,100 @@ function shuffleArray(arr) {
   return arr;
 }
 
-function buildMTQuestions() {
-  const out = [];
-  /* 6 from each core section */
-  ['arithmetic','algebra','logic','statistics'].forEach(k => {
-    out.push(...shuffleArray([...MT_QUESTION_BANK[k]]).slice(0,6));
+/* ═══════════════════════════════════════════════
+   ADAPTIVE DIFFICULTY ENGINE
+   Per-section difficulty state + lazy question queue
+═══════════════════════════════════════════════ */
+
+// Section configs: bank key → how many to serve
+const SECTION_CONFIG = [
+  { key:'arithmetic',  count:6 },
+  { key:'algebra',     count:6 },
+  { key:'logic',       count:6 },
+  { key:'statistics',  count:6 },
+  { key:'derivatives', count:4 },
+  { key:'integrals',   count:4 },
+  { key:'applied',     count:5 },
+];
+const TOTAL_QUESTIONS = SECTION_CONFIG.reduce((s,c)=>s+c.count, 0); // 37
+
+// Flat schedule: one section key per question slot in serving order
+const SECTION_SCHEDULE = SECTION_CONFIG.flatMap(c => Array(c.count).fill(c.key));
+
+// Adaptive state — populated by startMathTest()
+let adaptState = {
+  pools: {},  // key → {1:[...], 2:[...], 3:[...]}
+  diff:  {},  // key → current difficulty 1/2/3 (start at 2)
+  lastDiff: {},  // key → diff before last answer (for toast)
+};
+
+// Lazily-populated question array — each entry added as the test runs
+let MT_QUESTIONS = [];
+
+function buildAdaptivePools() {
+  adaptState = { pools:{}, diff:{}, lastDiff:{} };
+  SECTION_CONFIG.forEach(({ key }) => {
+    const bank = shuffleArray([...MT_QUESTION_BANK[key]]);
+    const n = bank.length;
+    const t1 = Math.ceil(n / 3);
+    const t2 = Math.ceil(2 * n / 3);
+    adaptState.pools[key] = {
+      1: bank.slice(0, t1),   // easiest third
+      2: bank.slice(t1, t2),  // middle third
+      3: bank.slice(t2),       // hardest third
+      usedIds: new Set(),
+    };
+    adaptState.diff[key]     = 2; // start medium
+    adaptState.lastDiff[key] = 2;
   });
-  /* calculus: 4 derivatives + 4 integrals + 5 applied = 13 */
-  const d  = shuffleArray([...MT_QUESTION_BANK.derivatives]);
-  const iv = shuffleArray([...MT_QUESTION_BANK.integrals]);
-  const ap = shuffleArray([...MT_QUESTION_BANK.applied]);
-  out.push(...d.slice(0,4), ...iv.slice(0,4), ...ap.slice(0,5));
-  return out;  /* 24 core + 13 advanced = 37 total */
+  MT_QUESTIONS = []; // reset lazy array
 }
 
+// Pick and remove one question from the best available difficulty tier
+function pickAdaptiveQuestion(sectionKey) {
+  const pool = adaptState.pools[sectionKey];
+  const preferred = adaptState.diff[sectionKey];
 
-let MT_QUESTIONS = [];
+  // Walk outward from preferred: preferred, then ±1, then the remaining tier
+  const tryOrder = [preferred, preferred-1, preferred+1, 1, 2, 3]
+    .filter((d, i, a) => d >= 1 && d <= 3 && a.indexOf(d) === i);
+
+  for (const tier of tryOrder) {
+    const tierPool = pool[tier];
+    const available = tierPool.filter(q => !pool.usedIds.has(q));
+    if (available.length > 0) {
+      const q = available[Math.floor(Math.random() * available.length)];
+      pool.usedIds.add(q);
+      return { q, tier }; // return question + the tier it actually came from
+    }
+  }
+  return null; // all questions exhausted (shouldn't happen)
+}
+
+// Called after an answer to adjust difficulty for that section
+function adaptDifficulty(sectionKey, correct) {
+  adaptState.lastDiff[sectionKey] = adaptState.diff[sectionKey];
+  if (correct) {
+    adaptState.diff[sectionKey] = Math.min(3, adaptState.diff[sectionKey] + 1);
+  } else {
+    adaptState.diff[sectionKey] = Math.max(1, adaptState.diff[sectionKey] - 1);
+  }
+}
+
+// Show a brief toast when difficulty shifts
+function showDiffToast(sectionKey) {
+  const prev = adaptState.lastDiff[sectionKey];
+  const cur  = adaptState.diff[sectionKey];
+  if (prev === cur) return;
+  const labels = {1:'Easy', 2:'Medium', 3:'Hard'};
+  const colors = {1:'var(--ok)', 2:'var(--ac)', 3:'var(--err)'};
+  const arrow  = cur > prev ? '↑' : '↓';
+  const toast  = document.getElementById('diffToast');
+  toast.innerHTML = `<span style="color:${colors[prev]}">${labels[prev]}</span><span class="dt-arrow">${arrow}</span><span style="color:${colors[cur]}">${labels[cur]}</span>`;
+  toast.classList.add('show');
+  clearTimeout(toast._t);
+  toast._t = setTimeout(() => toast.classList.remove('show'), 1800);
+}
 
 const MT_SCORE_GUIDE = [
   { min:32,max:37,level:'Advanced',badge:'sg-adv',color:'var(--green)',
@@ -3494,7 +3627,12 @@ const MT_SCORE_GUIDE = [
 ];
 
 function startMathTest() {
-  MT_QUESTIONS = buildMTQuestions();
+  buildAdaptivePools();
+  // Pre-load the very first question
+  const firstSection = SECTION_SCHEDULE[0];
+  const { q, tier } = pickAdaptiveQuestion(firstSection);
+  q._servedDiff = tier;
+  MT_QUESTIONS.push(q);
   document.getElementById('mtStart').style.display = 'none';
   document.getElementById('mtTest').classList.add('show');
   renderMTQuestion();
@@ -3502,11 +3640,19 @@ function startMathTest() {
 
 function renderMTQuestion() {
   const q = MT_QUESTIONS[mtState.current];
-  const total = MT_QUESTIONS.length;
-  document.getElementById('mtProgFill').style.width = (mtState.current/total*100)+'%';
+  document.getElementById('mtProgFill').style.width = (mtState.current/TOTAL_QUESTIONS*100)+'%';
   document.getElementById('mtSectionLbl').textContent = q.section;
   document.getElementById('mtSectionLbl').style.color = q.sectionColor;
-  document.getElementById('mtQNum').textContent = 'Question '+(mtState.current+1)+' of '+total;
+  document.getElementById('mtQNum').textContent = 'Question '+(mtState.current+1)+' of '+TOTAL_QUESTIONS;
+  // Update difficulty badge
+  const sKey = SECTION_SCHEDULE[mtState.current];
+  const curDiff = q._servedDiff || adaptState.diff[sKey] || 2;
+  const diffLabels = {1:'Easy', 2:'Medium', 3:'Hard'};
+  const badge = document.getElementById('diffBadge');
+  if (badge) {
+    badge.textContent = '⬤ ' + diffLabels[curDiff];
+    badge.className = 'diff-badge diff-' + curDiff;
+  }
   document.getElementById('mtQuestion').textContent = q.q;
   document.getElementById('mtQHint').textContent = q.hint;
   // Retypeset MathJax after updating DOM
@@ -3526,7 +3672,7 @@ function renderMTQuestion() {
   fb.className = 'mt-feedback';
   fb.style.display = 'none';
   document.getElementById('mtNext').disabled = true;
-  document.getElementById('mtNext').textContent = mtState.current===total-1 ? 'See Results \u2192' : 'Next \u2192';
+  document.getElementById('mtNext').textContent = mtState.current===TOTAL_QUESTIONS-1 ? 'See Results \u2192' : 'Next \u2192';
   mtState.answered = false;
 }
 
@@ -3535,7 +3681,10 @@ function selectMTAnswer(idx) {
   mtState.answered = true;
   const q = MT_QUESTIONS[mtState.current];
   const correct = idx === q.ans;
-  mtState.answers.push({q:mtState.current,chosen:idx,correct});
+  mtState.answers.push({q:mtState.current,chosen:idx,correct,diff:q._servedDiff||2});
+  // Adapt difficulty for this section
+  const _sKey = SECTION_SCHEDULE[mtState.current];
+  if (_sKey) adaptDifficulty(_sKey, correct);
   document.querySelectorAll('.mt-opt').forEach((btn,i) => {
     btn.disabled = true;
     if (i===q.ans) btn.classList.add('mt-correct');
@@ -3552,8 +3701,21 @@ function selectMTAnswer(idx) {
 
 function nextMTQuestion() {
   mtState.current++;
-  if (mtState.current >= MT_QUESTIONS.length) showMTResults();
-  else renderMTQuestion();
+  if (mtState.current >= TOTAL_QUESTIONS) {
+    showMTResults();
+    return;
+  }
+  // Lazy load: pick next question adaptively now that we know the difficulty
+  if (mtState.current >= MT_QUESTIONS.length) {
+    const nextSection = SECTION_SCHEDULE[mtState.current];
+    const result = pickAdaptiveQuestion(nextSection);
+    if (result) {
+      result.q._servedDiff = result.tier;
+      MT_QUESTIONS.push(result.q);
+      showDiffToast(nextSection);
+    }
+  }
+  renderMTQuestion();
 }
 
 function showMTResults() {
@@ -4096,11 +4258,65 @@ function buildHtmlPlanContent(previewMode) {
   margin-left: var(--f2);
 }
 
-</style></head><body>${bodyContent}</body></html>`;
+
+/* ── ADAPTIVE DIFFICULTY INDICATOR ── */
+.diff-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--f2);
+  font-family: var(--font-mono);
+  font-size: .6rem;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  padding: var(--f1) var(--f4);
+  border-radius: 20px;
+  border: 1px solid;
+  transition: all .4s ease;
+  font-weight: 600;
+}
+.diff-1 { color: var(--ok);  background: var(--ok-lo);  border-color: var(--ok-bd) }
+.diff-2 { color: var(--ac);  background: var(--ac-lo);  border-color: var(--ac-md) }
+.diff-3 { color: var(--err); background: var(--err-lo); border-color: var(--err-bd) }
+
+.diff-shift-toast {
+  position: fixed;
+  bottom: var(--f7);
+  left: 50%;
+  transform: translateX(-50%) translateY(20px);
+  background: var(--bg-1);
+  border: var(--border-std);
+  border-radius: var(--radius-sm);
+  padding: var(--f3) var(--f6);
+  font-family: var(--font-mono);
+  font-size: .72rem;
+  color: var(--tx);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity .3s, transform .3s;
+  z-index: 999;
+  white-space: nowrap;
+}
+.diff-shift-toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+}
+.diff-shift-toast .dt-arrow { font-size: .9rem; margin: 0 var(--f2) }
+
+/* ── QUESTION META ROW ── */
+.mt-q-meta {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--f4);
+}
+
+</style></head><body>${bodyContent}<div class="diff-shift-toast" id="diffToast"></div>
+</body></html>`;
 }
 
 function restartMathTest() {
   mtState = {current:0,answers:[],answered:false};
+  adaptState = {pools:{},diff:{},lastDiff:{}};
   MT_QUESTIONS = [];
   document.getElementById('mtResults').classList.remove('show');
   document.getElementById('mtTest').classList.remove('show');
@@ -4143,5 +4359,6 @@ document.addEventListener('DOMContentLoaded', () => {
   }
 });
 </script>
+<div class="diff-shift-toast" id="diffToast"></div>
 </body>
 </html>
