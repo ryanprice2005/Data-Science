@@ -1462,21 +1462,148 @@ footer::before {
   box-shadow: 0 0 var(--f5) rgba(0,232,122,.2);
 }
 
+
+/* ═══════════════════════════════════════════════
+   GRADIENT EXPERIENCE UPGRADE — learner-first layer
+═══════════════════════════════════════════════ */
+:root{
+  --glass: rgba(7,12,20,.72);
+  --glass-2: rgba(11,18,32,.82);
+  --hero-ring: radial-gradient(circle at center, rgba(0,207,255,.2), transparent 62%);
+}
+
+.skip-link{
+  position:absolute;left:-999px;top:var(--f4);z-index:9999;
+  background:var(--ac);color:var(--bg);padding:var(--f3) var(--f5);
+  border-radius:var(--radius-sm);font-weight:700;text-decoration:none;
+}
+.skip-link:focus{left:var(--f4)}
+
+.nav-links a[aria-current="page"]{color:var(--ac)}
+
+.hero{isolation:isolate}
+.hero::after{
+  content:'';position:absolute;inset:12% auto auto 50%;width:min(680px,86vw);height:min(680px,86vw);
+  transform:translateX(-50%);background:var(--hero-ring);filter:blur(6px);opacity:.45;z-index:-1;
+}
+.hero-kicker{
+  opacity:0;animation:up .7s .95s forwards;
+  display:flex;gap:var(--f3);flex-wrap:wrap;justify-content:center;margin-top:var(--f6);
+}
+.hero-chip{
+  display:inline-flex;align-items:center;gap:var(--f2);
+  background:rgba(7,12,20,.64);border:1px solid var(--bd-1);
+  color:var(--tx-2);border-radius:999px;padding:var(--f2) var(--f5);
+  font-family:var(--font-mono);font-size:.66rem;letter-spacing:.04em;
+}
+.hero-chip strong{color:var(--tx);font-weight:600}
+
+.hero-panel{
+  opacity:0;animation:up .7s 1.05s forwards;
+  width:min(850px,100%);margin-top:var(--f7);
+  display:grid;grid-template-columns:1.1fr .9fr;gap:var(--f4);text-align:left;
+}
+.hero-route,.hero-todo{
+  background:linear-gradient(135deg,var(--glass),rgba(15,24,44,.55));
+  border:1px solid rgba(0,207,255,.16);border-radius:var(--radius-lg);
+  box-shadow:var(--shadow-card), inset 0 0 80px rgba(0,207,255,.03);
+  padding:var(--f6);backdrop-filter:blur(16px);
+}
+.hero-route h3,.hero-todo h3{font-family:var(--font-display);font-size:1rem;margin-bottom:var(--f3)}
+.hero-route p,.hero-todo p{font-size:.82rem;color:var(--tx-2);line-height:1.7;margin-bottom:var(--f5)}
+.route-steps{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--f3)}
+.route-step{background:var(--bg-2);border:var(--border-std);border-radius:var(--radius-sm);padding:var(--f4)}
+.route-step span{display:block;font-family:var(--font-mono);font-size:.55rem;color:var(--ac);letter-spacing:.14em;text-transform:uppercase;margin-bottom:var(--f2)}
+.route-step strong{display:block;font-size:.82rem;color:var(--tx);line-height:1.35}
+.goal-select{
+  width:100%;background:var(--bg-2);border:1px solid var(--bd-1);color:var(--tx);
+  border-radius:var(--radius-sm);padding:var(--f3) var(--f4);font-family:var(--font-body);outline:none;
+}
+.goal-select:focus{border-color:var(--ac);box-shadow:0 0 0 4px var(--ac-lo)}
+.goal-output{margin-top:var(--f4);font-size:.8rem;color:var(--tx-2);line-height:1.7;border-left:2px solid var(--ac);padding-left:var(--f4)}
+.goal-output strong{color:var(--ac)}
+@media(max-width:860px){.hero-panel{grid-template-columns:1fr}.route-steps{grid-template-columns:1fr}}
+
+.xp-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:var(--f4);margin-top:var(--f7)}
+.xp-card{
+  background:var(--bg-1);border:var(--border-std);border-radius:var(--radius-md);
+  padding:var(--f6);position:relative;overflow:hidden;transition:all var(--transition);
+}
+.xp-card::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at top right,rgba(0,207,255,.08),transparent 50%);opacity:.75;pointer-events:none}
+.xp-card:hover{transform:translateY(-3px);border-color:var(--ac-md);box-shadow:var(--shadow-card)}
+.xp-icon{font-size:1.5rem;margin-bottom:var(--f4)}
+.xp-card h3{font-family:var(--font-display);font-size:1.05rem;margin-bottom:var(--f2)}
+.xp-card p{font-size:.82rem;color:var(--tx-2);line-height:1.75}
+.path-ladder{margin-top:var(--f7);display:grid;grid-template-columns:repeat(4,1fr);gap:var(--f4)}
+.ladder-step{background:var(--bg-2);border:var(--border-std);border-radius:var(--radius-md);padding:var(--f5);position:relative}
+.ladder-step:not(:last-child)::after{content:'→';position:absolute;right:-18px;top:50%;transform:translateY(-50%);color:var(--tx-3);font-family:var(--font-mono)}
+.ladder-num{font-family:var(--font-mono);font-size:.62rem;color:var(--ac);letter-spacing:.16em;text-transform:uppercase;margin-bottom:var(--f3)}
+.ladder-step h4{font-size:.95rem;margin-bottom:var(--f2)}
+.ladder-step p{font-size:.76rem;color:var(--tx-2);line-height:1.65}
+@media(max-width:900px){.xp-grid,.path-ladder{grid-template-columns:1fr 1fr}.ladder-step:not(:last-child)::after{display:none}}
+@media(max-width:560px){.xp-grid,.path-ladder{grid-template-columns:1fr}}
+
+#learning-studio{background:linear-gradient(180deg,var(--bg-1),var(--bg));position:relative;overflow:hidden}
+#learning-studio::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse at 20% 20%,rgba(0,207,255,.08),transparent 45%);pointer-events:none}
+.studio-shell{display:grid;grid-template-columns:.9fr 1.1fr;gap:var(--f6);align-items:start;position:relative}
+.studio-card,.studio-plan{
+  background:var(--glass-2);border:1px solid rgba(0,207,255,.14);border-radius:var(--radius-lg);
+  padding:var(--f6);box-shadow:var(--shadow-card);backdrop-filter:blur(14px);
+}
+.studio-field{margin-bottom:var(--f5)}
+.studio-field label{display:block;font-family:var(--font-mono);font-size:.62rem;color:var(--tx-2);letter-spacing:.12em;text-transform:uppercase;margin-bottom:var(--f2)}
+.studio-field select,.studio-field input{
+  width:100%;background:var(--bg-2);border:var(--border-std);border-radius:var(--radius-sm);
+  padding:var(--f3) var(--f4);color:var(--tx);font-family:var(--font-body);outline:none;
+}
+.studio-field select:focus,.studio-field input:focus{border-color:var(--ac);box-shadow:0 0 0 4px var(--ac-lo)}
+.studio-actions{display:flex;gap:var(--f3);flex-wrap:wrap;margin-top:var(--f5)}
+.plan-top{display:flex;justify-content:space-between;gap:var(--f4);align-items:flex-start;margin-bottom:var(--f5);padding-bottom:var(--f5);border-bottom:var(--border-std)}
+.plan-title{font-family:var(--font-display);font-size:1.25rem;font-weight:700}
+.plan-pill{font-family:var(--font-mono);font-size:.62rem;color:var(--ok);background:var(--ok-lo);border:1px solid var(--ok-bd);border-radius:999px;padding:var(--f1) var(--f4);white-space:nowrap}
+.week-grid{display:grid;gap:var(--f3)}
+.week-card{display:grid;grid-template-columns:88px 1fr;gap:var(--f4);background:var(--bg-2);border:var(--border-std);border-radius:var(--radius-sm);padding:var(--f4)}
+.week-card strong{font-family:var(--font-mono);font-size:.66rem;color:var(--ac);letter-spacing:.08em;text-transform:uppercase}
+.week-card p{font-size:.82rem;color:var(--tx-2);line-height:1.65}
+.plan-note{margin-top:var(--f5);background:var(--ac-lo);border:1px solid var(--ac-md);border-radius:var(--radius-sm);padding:var(--f4);font-size:.82rem;color:var(--tx-2);line-height:1.7}
+@media(max-width:840px){.studio-shell{grid-template-columns:1fr}.week-card{grid-template-columns:1fr}}
+
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}
+}
+
+
+/* FULL LEARNING PLATFORM UPGRADE — v2 */
+.start-here-section{background:linear-gradient(180deg,var(--bg) 0%,var(--bg-1) 100%);position:relative}.start-here-section:before,.dashboard-section:before,.job-section:before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--ac-md),transparent)}
+.onboard-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--f4);margin-bottom:var(--f7)}@media(max-width:960px){.onboard-grid{grid-template-columns:repeat(2,1fr)}}@media(max-width:560px){.onboard-grid{grid-template-columns:1fr}}
+.onboard-card{text-align:left;background:var(--bg-1);border:var(--border-std);border-radius:var(--radius-md);padding:var(--f6);color:var(--tx);cursor:pointer;transition:all var(--transition);min-height:230px;display:flex;flex-direction:column;gap:var(--f3)}.onboard-card:hover,.onboard-card.active{border-color:var(--ac);background:linear-gradient(135deg,var(--bg-2),rgba(0,207,255,.05));transform:translateY(-3px);box-shadow:var(--shadow-card)}.ob-icon{font-size:1.8rem}.onboard-card strong{font-family:var(--font-display);font-size:1.05rem}.onboard-card em{font-style:normal;color:var(--tx-2);font-size:.82rem;line-height:1.65}.onboard-card small{margin-top:auto;font-family:var(--font-mono);color:var(--ac);font-size:.62rem;line-height:1.4}
+.guided-strip{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--f3);padding:var(--f5);border:var(--border-std);border-radius:var(--radius-md);background:var(--bg-2)}@media(max-width:760px){.guided-strip{grid-template-columns:1fr 1fr}}@media(max-width:480px){.guided-strip{grid-template-columns:1fr}}.guided-strip div{padding:var(--f4);border-left:1px solid var(--bd-1)}.guided-strip span{font-family:var(--font-mono);font-size:.58rem;color:var(--ac);letter-spacing:.16em}.guided-strip strong{display:block;font-family:var(--font-display);margin:var(--f1) 0}.guided-strip p{font-size:.75rem;line-height:1.55;color:var(--tx-2)}
+.dashboard-section{background:var(--bg-1);position:relative}.dashboard-head{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--f6);margin-bottom:var(--f6)}@media(max-width:780px){.dashboard-head{flex-direction:column}.dash-actions{width:100%}}.dash-actions{display:flex;gap:var(--f3);flex-wrap:wrap}.dash-grid{display:grid;grid-template-columns:1.25fr 1fr 1fr 1fr;gap:var(--f4);margin-bottom:var(--f4)}@media(max-width:1000px){.dash-grid{grid-template-columns:1fr 1fr}}@media(max-width:600px){.dash-grid{grid-template-columns:1fr}}
+.dash-card,.dash-panel{background:var(--bg-2);border:var(--border-std);border-radius:var(--radius-md);padding:var(--f6);box-shadow:var(--shadow-card);position:relative;overflow:hidden}.dash-primary{background:linear-gradient(135deg,var(--bg-2),rgba(0,207,255,.07));border-color:var(--ac-md)}.dash-label{font-family:var(--font-mono);font-size:.6rem;text-transform:uppercase;letter-spacing:.16em;color:var(--tx-3);margin-bottom:var(--f3)}.dash-card h3{font-family:var(--font-display);font-size:1.15rem;margin-bottom:var(--f2)}.dash-card p,.dash-panel p{font-size:.8rem;color:var(--tx-2);line-height:1.7}.dash-badges{display:flex;gap:var(--f2);flex-wrap:wrap;margin-top:var(--f4)}.dash-badge{font-family:var(--font-mono);font-size:.6rem;padding:var(--f1) var(--f3);border-radius:10px;border:1px solid var(--ac-md);color:var(--ac);background:var(--ac-lo)}.dash-lower{display:grid;grid-template-columns:1fr 1fr 1fr;gap:var(--f4)}@media(max-width:900px){.dash-lower{grid-template-columns:1fr}}
+.progress-item{display:flex;align-items:center;gap:var(--f3);padding:var(--f3) 0;border-bottom:1px solid var(--bd-0);font-size:.82rem;color:var(--tx-2)}.progress-item:last-child{border-bottom:none}.progress-dot{width:18px;height:18px;border-radius:50%;border:1px solid var(--bd-2);display:flex;align-items:center;justify-content:center;font-size:.68rem;flex-shrink:0}.progress-item.done .progress-dot{background:var(--ok);border-color:var(--ok);color:var(--bg)}.progress-item.done{color:var(--tx)}
+.saved-career{display:flex;align-items:center;justify-content:space-between;gap:var(--f3);padding:var(--f3);border:1px solid var(--bd-0);border-radius:var(--radius-sm);margin-bottom:var(--f2);background:var(--bg-1)}.saved-career button{background:transparent;border:none;color:var(--err);cursor:pointer;font-size:.9rem}.saved-career strong{font-size:.82rem}.saved-career small{display:block;color:var(--tx-3);font-family:var(--font-mono);font-size:.58rem;margin-top:var(--f1)}
+.job-snapshot ul{padding-left:1rem;color:var(--tx-2);font-size:.8rem;line-height:1.8}.job-snapshot strong{color:var(--tx)}
+.cc .career-extra,.rc .career-extra{margin-top:var(--f4);padding-top:var(--f4);border-top:1px solid var(--bd-0);display:grid;gap:var(--f2)}.career-extra span{font-size:.72rem;color:var(--tx-2);line-height:1.5}.career-extra b{color:var(--tx);font-weight:600}.fav-btn{margin-top:var(--f4);background:transparent;border:1px solid var(--bd-1);color:var(--tx-2);border-radius:var(--radius-sm);padding:var(--f2) var(--f4);font-size:.72rem;font-family:var(--font-mono);cursor:pointer;transition:all var(--transition)}.fav-btn:hover,.fav-btn.saved{border-color:var(--ac);color:var(--ac);background:var(--ac-lo)}
+.skill-gap-box{margin-top:var(--f5);background:var(--bg-2);border:1px solid var(--ac-md);border-radius:var(--radius-sm);padding:var(--f5);font-size:.84rem;line-height:1.75;color:var(--tx-2)}.skill-gap-box h4{font-family:var(--font-display);color:var(--tx);margin-bottom:var(--f2)}.gap-row{display:grid;grid-template-columns:140px 1fr;gap:var(--f3);padding:var(--f2) 0;border-bottom:1px solid var(--bd-0)}.gap-row:last-child{border-bottom:none}@media(max-width:520px){.gap-row{grid-template-columns:1fr}}
+.job-section{background:linear-gradient(180deg,var(--bg-1),var(--bg));position:relative}.job-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:var(--f4)}@media(max-width:900px){.job-grid{grid-template-columns:1fr 1fr}}@media(max-width:520px){.job-grid{grid-template-columns:1fr}}.job-card{background:var(--bg-1);border:var(--border-std);border-radius:var(--radius-md);padding:var(--f6);transition:all var(--transition)}.job-card:hover{border-color:var(--ac);transform:translateY(-2px)}.job-card span{font-family:var(--font-mono);font-size:.6rem;color:var(--ac);letter-spacing:.16em}.job-card h3{font-family:var(--font-display);font-size:1rem;margin:var(--f2) 0}.job-card p{font-size:.8rem;color:var(--tx-2);line-height:1.7}
+@media (prefers-reduced-motion: reduce){*,*::before,*::after{animation-duration:.001ms!important;animation-iteration-count:1!important;transition-duration:.001ms!important;scroll-behavior:auto!important}.hgrid{animation:none!important}}
 </style>
 
 </head>
 <body>
+<a class="skip-link" href="#start-here">Skip to main content</a>
 
 <nav>
   <div class="nav-logo">Grad<span>ient</span></div>
   <ul class="nav-links">
     <li><a href="#" onclick="openQuiz();return false">↳ Get Matched</a></li>
+    <li><a href="#start-here">Start Here</a></li>
+    <li><a href="#dashboard">Dashboard</a></li>
+    <li><a href="#learner-path">Learner Path</a></li>
     <li><a href="#explore">Careers</a></li>
-    <li><a href="#radar-section">Radar Chart</a></li>
-    <li><a href="#math-explainers">Math Roadmaps</a></li>
-    <li><a href="#spectrum">Math Spectrum</a></li>
-    <li><a href="#math-test">∑ Math Test</a></li>
-    <li><a href="#math-test" class="nav-cta">↳ Take the Test</a></li>
+    <li><a href="#math-explainers">Roadmaps</a></li>
+    <li><a href="#learning-studio">Plan Builder</a></li>
+    <li><a href="#math-test" class="nav-cta">∑ Take the Test</a></li>
   </ul>
   <div class="nav-progress" id="navProgress"></div>
 </nav>
@@ -1491,10 +1618,108 @@ footer::before {
     <button class="btn btn-v" onclick="openQuiz()">↳ Find My Career Match</button>
     <a href="#math-explainers" class="btn btn-o">∫ Math Roadmaps</a>
     <a href="#explore" class="btn btn-o">Browse All Careers</a>
+    <a href="#dashboard" class="btn btn-o">◎ My Dashboard</a>
     <a href="#radar-section" class="btn btn-o">⊕ Compare Skills</a>
     <a href="#math-test" class="btn btn-o">∑ Take the Math Test</a>
   </div>
+  <div class="hero-kicker" aria-label="Gradient highlights">
+    <span class="hero-chip"><strong>37</strong> math questions</span>
+    <span class="hero-chip"><strong>4</strong> career inputs</span>
+    <span class="hero-chip"><strong>Personal</strong> learning plan</span>
+    <span class="hero-chip"><strong>O*NET</strong> career data</span>
+  </div>
+  <div class="hero-panel" aria-label="How Gradient works">
+    <div class="hero-route">
+      <h3>Start with where you are. Leave with where to go next.</h3>
+      <p>Gradient turns interests, math comfort, and career data into a practical learning path instead of a generic list of jobs.</p>
+      <div class="route-steps">
+        <div class="route-step"><span>Step 01</span><strong>Match your interests</strong></div>
+        <div class="route-step"><span>Step 02</span><strong>Measure your math level</strong></div>
+        <div class="route-step"><span>Step 03</span><strong>Build a focused plan</strong></div>
+      </div>
+    </div>
+    <div class="hero-todo">
+      <h3>Choose your current goal</h3>
+      <p>This stays on your device and shapes the suggested next step below.</p>
+      <select class="goal-select" id="quickGoal" onchange="updateQuickGoal()" aria-label="Choose your current learning goal">
+        <option value="career">I want to choose a tech career path</option>
+        <option value="math">I want to improve my math confidence</option>
+        <option value="portfolio">I want to build a portfolio project</option>
+        <option value="job">I want to become job-ready</option>
+      </select>
+      <div class="goal-output" id="quickGoalOutput"></div>
+    </div>
+  </div>
   <div class="scroll-bob"><span>scroll</span>↓</div>
+</section>
+
+<!-- START HERE / ONBOARDING -->
+<section id="start-here" class="start-here-section">
+  <div class="con">
+    <div class="slabel fi">Start Here</div>
+    <h2 class="stitle fi">What do you want Gradient to help you do today?</h2>
+    <p class="sdesc fi">Choose one starting point. The page will guide you to the right tool, save your preference on this device, and update your personal dashboard as you complete steps.</p>
+    <div class="onboard-grid fi" role="list" aria-label="Choose a learning goal">
+      <button class="onboard-card" data-goal="career" onclick="selectOnboardingGoal('career')"><span class="ob-icon">🧭</span><strong>Find my career path</strong><em>Use interests and math comfort to identify practical tech roles.</em><small>Recommended first step: Career Matcher</small></button>
+      <button class="onboard-card" data-goal="math" onclick="selectOnboardingGoal('math')"><span class="ob-icon">∑</span><strong>Check my math readiness</strong><em>See which math skills support your career options.</em><small>Recommended first step: Math Test</small></button>
+      <button class="onboard-card" data-goal="portfolio" onclick="selectOnboardingGoal('portfolio')"><span class="ob-icon">🧪</span><strong>Build a portfolio project</strong><em>Turn learning into proof you can show in class or interviews.</em><small>Recommended first step: Plan Builder</small></button>
+      <button class="onboard-card" data-goal="job" onclick="selectOnboardingGoal('job')"><span class="ob-icon">💼</span><strong>Prepare for an internship or job</strong><em>Translate skills into resume bullets, projects, and interview talking points.</em><small>Recommended first step: Dashboard</small></button>
+    </div>
+    <div class="guided-strip fi" id="guidedStrip">
+      <div><span>01</span><strong>Match</strong><p>Find roles that fit how you think and what you enjoy.</p></div>
+      <div><span>02</span><strong>Measure</strong><p>Check readiness and identify the highest-value skill gap.</p></div>
+      <div><span>03</span><strong>Plan</strong><p>Build a weekly learning route matched to your goal.</p></div>
+      <div><span>04</span><strong>Prove</strong><p>Create a small project and explain what it demonstrates.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- PERSONAL DASHBOARD -->
+<section id="dashboard" class="dashboard-section">
+  <div class="con">
+    <div class="dashboard-head fi"><div><div class="slabel">My Learning Dashboard</div><h2 class="stitle">Your path updates as you use Gradient.</h2><p class="sdesc">Complete the matcher, math test, and plan builder to turn this into a personal learning advisor. Your progress is saved only on this device.</p></div><div class="dash-actions"><button class="btn btn-b" onclick="openQuiz()">Take Career Matcher</button><a class="btn btn-o" href="#math-test">Take Math Test</a></div></div>
+    <div class="dash-grid fi">
+      <article class="dash-card dash-primary"><div class="dash-label">Top career match</div><h3 id="dashCareer">Not matched yet</h3><p id="dashCareerText">Take the Career Matcher to see your best-fit role, why it fits, and what to learn next.</p><div id="dashCareerBadges" class="dash-badges"></div></article>
+      <article class="dash-card"><div class="dash-label">Math readiness</div><h3 id="dashMath">Not tested yet</h3><p id="dashMathText">Take the Math Test to connect your score to career options and next skills.</p></article>
+      <article class="dash-card"><div class="dash-label">Next skill to build</div><h3 id="dashSkill">Choose a goal</h3><p id="dashSkillText">Gradient will recommend one focused skill so learning feels manageable.</p></article>
+      <article class="dash-card"><div class="dash-label">Weekly focus</div><h3 id="dashWeekly">No plan saved</h3><p id="dashWeeklyText">Use the Personal Learning Studio to save a weekly plan.</p></article>
+    </div>
+    <div class="dash-lower fi"><div class="dash-panel"><div class="dash-label">Progress checklist</div><div class="progress-list" id="dashChecklist"></div></div><div class="dash-panel"><div class="dash-label">Saved careers</div><div class="saved-careers" id="savedCareers"></div></div><div class="dash-panel"><div class="dash-label">Job readiness snapshot</div><div class="job-snapshot" id="jobSnapshot"></div></div></div>
+  </div>
+</section>
+
+<!-- LEARNER PATH -->
+<section id="learner-path">
+  <div class="con">
+    <div class="slabel fi">Guided Learning Experience</div>
+    <h2 class="stitle fi">A better path than “just learn coding.”</h2>
+    <p class="sdesc fi">Gradient is designed for students who need direction, confidence, and a realistic next step. It connects career interests, math readiness, and practice projects into one learning experience.</p>
+
+    <div class="xp-grid fi">
+      <article class="xp-card">
+        <div class="xp-icon">🧭</div>
+        <h3>Direction first</h3>
+        <p>Users begin with a clear goal and receive career matches that explain why each role fits instead of overwhelming them with every possible option.</p>
+      </article>
+      <article class="xp-card">
+        <div class="xp-icon">📈</div>
+        <h3>Skill-aware recommendations</h3>
+        <p>The site uses math comfort, interests, and education level to suggest roles that feel challenging but reachable.</p>
+      </article>
+      <article class="xp-card">
+        <div class="xp-icon">🧪</div>
+        <h3>Practice that becomes proof</h3>
+        <p>Each learning plan pushes users toward small projects they can show, explain, and build upon in interviews or class portfolios.</p>
+      </article>
+    </div>
+
+    <div class="path-ladder fi" aria-label="Gradient learner journey">
+      <div class="ladder-step"><div class="ladder-num">01 · Discover</div><h4>Take the matcher</h4><p>Find careers aligned with interests, education, and current confidence.</p></div>
+      <div class="ladder-step"><div class="ladder-num">02 · Diagnose</div><h4>Check math readiness</h4><p>Use the test to identify strengths and the areas worth practicing first.</p></div>
+      <div class="ladder-step"><div class="ladder-num">03 · Learn</div><h4>Follow a roadmap</h4><p>Study the math and technical concepts that connect directly to the role.</p></div>
+      <div class="ladder-step"><div class="ladder-num">04 · Prove</div><h4>Build a project</h4><p>Create a small portfolio artifact that demonstrates the skill in context.</p></div>
+    </div>
+  </div>
 </section>
 
 <!-- CAREER MATCH SECTION ANCHOR -->
@@ -1808,6 +2033,78 @@ footer::before {
         </div>
       </div>
       </div><!-- mt-fade-wrap -->
+    </div>
+  </div>
+</section>
+
+
+<!-- LEARNING STUDIO -->
+<section id="learning-studio">
+  <div class="con">
+    <div class="slabel fi">Personal Learning Studio</div>
+    <h2 class="stitle fi">Build a weekly plan that fits your goal.</h2>
+    <p class="sdesc fi">Choose a role, timeline, and study style. Gradient creates a practical plan that blends concepts, practice, and portfolio evidence.</p>
+    <div class="studio-shell fi">
+      <div class="studio-card">
+        <div class="studio-field">
+          <label for="studioRole">Career focus</label>
+          <select id="studioRole">
+            <option value="UX/UI Designer">UX/UI Designer</option>
+            <option value="Cybersecurity Analyst">Cybersecurity Analyst</option>
+            <option value="Data Analyst">Data Analyst</option>
+            <option value="Software Developer">Software Developer</option>
+            <option value="Network Administrator">Network Administrator</option>
+            <option value="Cloud Support Associate">Cloud Support Associate</option>
+            <option value="Machine Learning Engineer">Machine Learning Engineer</option>
+          </select>
+        </div>
+        <div class="studio-field">
+          <label for="studioLevel">Current level</label>
+          <select id="studioLevel">
+            <option value="starting">Starting out</option>
+            <option value="building">Building confidence</option>
+            <option value="ready">Almost job-ready</option>
+          </select>
+        </div>
+        <div class="studio-field">
+          <label for="studioTime">Weekly time</label>
+          <select id="studioTime">
+            <option value="2">2 hours/week</option>
+            <option value="4" selected>4 hours/week</option>
+            <option value="6">6+ hours/week</option>
+          </select>
+        </div>
+        <div class="studio-field">
+          <label for="studioStyle">Preferred style</label>
+          <select id="studioStyle">
+            <option value="visual">Visual examples</option>
+            <option value="hands-on" selected>Hands-on projects</option>
+            <option value="reading">Reading + notes</option>
+            <option value="mixed">Mixed approach</option>
+          </select>
+        </div>
+        <div class="studio-actions">
+          <button class="btn btn-b" onclick="buildStudioPlan()">Generate My Plan</button>
+          <button class="btn btn-o" onclick="saveStudioPlan()">Save on this device</button>
+        </div>
+      </div>
+      <div class="studio-plan" id="studioPlan" aria-live="polite"></div>
+    </div>
+  </div>
+</section>
+
+
+<!-- JOB READINESS -->
+<section id="job-readiness" class="job-section">
+  <div class="con">
+    <div class="slabel fi">Career Readiness</div>
+    <h2 class="stitle fi">Turn learning into something usable.</h2>
+    <p class="sdesc fi">A learning path becomes more powerful when it helps users explain what they can do. Use these prompts after choosing a role or finishing a project.</p>
+    <div class="job-grid fi">
+      <article class="job-card"><span>01</span><h3>Resume skill line</h3><p id="resumeLine">Example: Built a small web project, documented the process, and explained the user problem it solves.</p></article>
+      <article class="job-card"><span>02</span><h3>Portfolio proof</h3><p id="portfolioLine">Create one artifact: a dashboard, case study, troubleshooting guide, app, network diagram, or security checklist.</p></article>
+      <article class="job-card"><span>03</span><h3>Interview story</h3><p id="interviewLine">Use this structure: problem → action → result → what I would improve next.</p></article>
+      <article class="job-card"><span>04</span><h3>Before applying</h3><p id="applyLine">Be ready to explain one tool, one concept, one project decision, and one thing you learned from feedback.</p></article>
     </div>
   </div>
 </section>
@@ -4587,5 +4884,163 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 </script>
 <div class="diff-shift-toast" id="diffToast"></div>
+
+<script>
+/* ════════════════════════════════════════
+   LEARNER EXPERIENCE UPGRADE
+════════════════════════════════════════ */
+const goalMessages = {
+  career: '<strong>Next best step:</strong> launch the Career Matcher, then compare your top three roles in the radar chart.',
+  math: '<strong>Next best step:</strong> take the Math Test first, then use your weakest section to choose a roadmap.',
+  portfolio: '<strong>Next best step:</strong> pick one role in the Plan Builder and turn Week 4 into a small showcase project.',
+  job: '<strong>Next best step:</strong> use the matcher, take the test, then download the learning plan as a job-readiness checklist.'
+};
+function updateQuickGoal(){
+  const el = document.getElementById('quickGoal');
+  const out = document.getElementById('quickGoalOutput');
+  if(!el || !out) return;
+  localStorage.setItem('gradient.quickGoal', el.value);
+  out.innerHTML = goalMessages[el.value] || goalMessages.career;
+}
+
+const rolePlans = {
+  'UX/UI Designer': {
+    concept:'usability, visual hierarchy, accessibility, and basic analytics',
+    project:'redesign one page of an app and explain the design decisions in a short case study',
+    math:'percentages, basic statistics, and A/B testing logic'
+  },
+  'Cybersecurity Analyst': {
+    concept:'network basics, threat models, logs, authentication, and incident response',
+    project:'create a simple security audit checklist and analyze a sample login log',
+    math:'binary, logic, probability, and risk scoring'
+  },
+  'Data Analyst': {
+    concept:'spreadsheets, SQL, charts, summary statistics, and insight writing',
+    project:'build a mini dashboard from a public dataset and write three recommendations',
+    math:'averages, rates, correlation, and basic statistics'
+  },
+  'Software Developer': {
+    concept:'programming fundamentals, debugging, data structures, and version control',
+    project:'build a small interactive web app that solves a real user problem',
+    math:'algebra, functions, logic, and algorithmic thinking'
+  },
+  'Network Administrator': {
+    concept:'IP addressing, routing, DNS, troubleshooting, and documentation',
+    project:'diagram a small office network and explain how devices communicate',
+    math:'binary, subnetting, ratios, and logic'
+  },
+  'Cloud Support Associate': {
+    concept:'cloud services, permissions, storage, monitoring, and cost awareness',
+    project:'design a basic cloud deployment checklist for a small website',
+    math:'unit conversions, rates, storage estimates, and cost calculations'
+  },
+  'Machine Learning Engineer': {
+    concept:'Python, data preparation, model evaluation, linear algebra, and statistics',
+    project:'train a simple model and explain accuracy, limitations, and next improvements',
+    math:'statistics, functions, vectors, derivatives, and probability'
+  }
+};
+function buildStudioPlan(){
+  const role = document.getElementById('studioRole')?.value || 'Data Analyst';
+  const level = document.getElementById('studioLevel')?.value || 'building';
+  const time = document.getElementById('studioTime')?.value || '4';
+  const style = document.getElementById('studioStyle')?.value || 'hands-on';
+  const plan = rolePlans[role] || rolePlans['Data Analyst'];
+  const pace = time === '2' ? 'steady and focused' : time === '6' ? 'accelerated and project-heavy' : 'balanced and realistic';
+  const levelText = level === 'starting' ? 'start with vocabulary and small wins' : level === 'ready' ? 'polish proof, speed, and explanation' : 'strengthen fundamentals while building';
+  const styleText = style === 'visual' ? 'use diagrams, examples, and before/after comparisons' : style === 'reading' ? 'use notes, summaries, and short written reflections' : style === 'mixed' ? 'combine tutorials, practice, and reflection' : 'learn by building something each week';
+  const html = `
+    <div class="plan-top">
+      <div>
+        <div class="plan-title">${role} learning plan</div>
+        <p style="color:var(--tx-2);font-size:.84rem;line-height:1.7;margin-top:var(--f2)">A ${pace} plan that helps you ${levelText}. Best fit: ${styleText}.</p>
+      </div>
+      <span class="plan-pill">${time}+ hrs/week</span>
+    </div>
+    <div class="week-grid">
+      <div class="week-card"><strong>Week 1</strong><p><b>Orient:</b> Learn the role vocabulary and map the core concepts: ${plan.concept}.</p></div>
+      <div class="week-card"><strong>Week 2</strong><p><b>Practice:</b> Complete small exercises tied to the math you need most: ${plan.math}.</p></div>
+      <div class="week-card"><strong>Week 3</strong><p><b>Apply:</b> Follow one tutorial, then change it so the result becomes your own work.</p></div>
+      <div class="week-card"><strong>Week 4</strong><p><b>Prove:</b> ${plan.project}.</p></div>
+    </div>
+    <div class="plan-note"><strong style="color:var(--ac)">Personal learning tip:</strong> At the end of each week, write three sentences: what you learned, what confused you, and what you can now demonstrate.</div>`;
+  const out = document.getElementById('studioPlan');
+  if(out) out.innerHTML = html;
+  localStorage.setItem('gradient.studioDraft', JSON.stringify({role,level,time,style}));
+}
+function saveStudioPlan(){
+  buildStudioPlan();
+  const btns = document.querySelectorAll('.studio-actions .btn-o');
+  btns.forEach(btn => { btn.textContent = 'Saved ✓'; setTimeout(()=>btn.textContent='Save on this device', 1400); });
+}
+function hydrateLearnerUpgrade(){
+  const savedGoal = localStorage.getItem('gradient.quickGoal');
+  const quick = document.getElementById('quickGoal');
+  if(quick && savedGoal){ quick.value = savedGoal; }
+  updateQuickGoal();
+  try{
+    const saved = JSON.parse(localStorage.getItem('gradient.studioDraft') || 'null');
+    if(saved){
+      ['Role','Level','Time','Style'].forEach(key => {
+        const el = document.getElementById('studio' + key);
+        const val = saved[key.toLowerCase()];
+        if(el && val) el.value = val;
+      });
+    }
+  }catch(e){}
+  buildStudioPlan();
+}
+if(document.readyState === 'loading'){
+  document.addEventListener('DOMContentLoaded', hydrateLearnerUpgrade);
+}else{
+  hydrateLearnerUpgrade();
+}
+</script>
+
+
+<script>
+/* DASHBOARD + PERSONALIZATION UPGRADE — v2 */
+const CAREER_EXTRA = {
+  ux:{likes:'people, design, accessibility, and improving frustrating apps', first:'Create a before/after redesign of one screen and explain your choices.', project:'Mobile app onboarding case study', resume:'Designed an accessible interface prototype and justified changes using user-centered design principles.'},
+  techwrite:{likes:'writing, explaining, organizing, and translating complex topics', first:'Rewrite a confusing help article into a beginner-friendly guide.', project:'API or software setup guide', resume:'Created clear technical documentation that improved user understanding of a complex process.'},
+  itsupport:{likes:'helping people, troubleshooting, and solving practical tech problems', first:'Build a troubleshooting checklist for a common laptop, Wi-Fi, or software problem.', project:'Help desk knowledge-base article', resume:'Resolved technical issues using a structured troubleshooting process and clear user communication.'},
+  webdev:{likes:'building visible projects, creative problem-solving, and interactive design', first:'Build a personal landing page with one interactive feature.', project:'Portfolio website or small web app', resume:'Built and documented a responsive web project using HTML, CSS, JavaScript, and version control.'},
+  netadmin:{likes:'systems, devices, networks, and figuring out how things connect', first:'Diagram a small network and label the role of each device.', project:'Small office network diagram', resume:'Mapped and explained a basic network environment including IP addressing, routing, and troubleshooting steps.'},
+  netsec:{likes:'security, systems thinking, and protecting organizations', first:'Review a sample network and identify likely risks.', project:'Network security hardening checklist', resume:'Analyzed a network scenario and recommended practical security controls to reduce risk.'},
+  sysadmin:{likes:'keeping systems reliable, automating tasks, and solving behind-the-scenes problems', first:'Write a simple PowerShell or Bash script that automates a repetitive task.', project:'System maintenance script', resume:'Automated a routine system administration task and documented the process for repeatable use.'},
+  cloudeng:{likes:'infrastructure, automation, scaling, and modern cloud tools', first:'Create a basic cloud architecture diagram for a small website.', project:'Cloud deployment checklist', resume:'Designed a basic cloud deployment plan considering storage, permissions, monitoring, and cost.'},
+  devops:{likes:'automation, coding, systems, and making teams work faster', first:'Create a simple GitHub Actions workflow or deployment checklist.', project:'CI/CD pipeline demo', resume:'Built a basic automation workflow that supports repeatable testing or deployment.'},
+  cybersec:{likes:'investigation, risk, puzzles, and protecting people from threats', first:'Analyze sample login events and flag suspicious behavior.', project:'Security incident mini-report', resume:'Analyzed security logs, identified suspicious activity, and documented recommended next actions.'},
+  dataanalyst:{likes:'patterns, spreadsheets, charts, and turning data into decisions', first:'Analyze a small dataset and make three charts with recommendations.', project:'Interactive data dashboard', resume:'Cleaned and analyzed data to create visual insights and actionable recommendations.'},
+  bi:{likes:'business questions, dashboards, and helping leaders make decisions', first:'Build a dashboard showing trends, totals, and one recommendation.', project:'Business KPI dashboard', resume:'Developed a dashboard that translated operational data into clear performance insights.'},
+  dba:{likes:'organization, reliability, databases, and careful problem-solving', first:'Design a small database table structure for a campus or business process.', project:'Relational database schema', resume:'Designed a normalized database structure and explained how it supports accurate reporting.'},
+  software:{likes:'logic, building tools, debugging, and solving user problems with code', first:'Build a small app that takes input, processes it, and returns a useful result.', project:'Problem-solving web or Python app', resume:'Developed a functional application, tested core features, and documented technical decisions.'},
+  datascientist:{likes:'statistics, prediction, research questions, and evidence-based decisions', first:'Create a notebook that predicts or classifies something simple.', project:'Predictive analysis notebook', resume:'Built a beginner predictive model and explained accuracy, limitations, and improvement opportunities.'},
+  mleng:{likes:'advanced math, coding, models, and building intelligent systems', first:'Train a simple model and compare performance with a baseline.', project:'Machine learning model demo', resume:'Implemented a machine learning workflow including data preparation, model training, evaluation, and reflection.'},
+  game:{likes:'creative coding, animation, physics, and interactive experiences', first:'Build a small game mechanic like movement, collision, or score tracking.', project:'Playable game prototype', resume:'Created an interactive game prototype using programming logic, collision handling, and user feedback.'},
+  quant:{likes:'math, finance, probability, models, and high-level analytical challenges', first:'Backtest a simple investment rule using historical data.', project:'Trading strategy notebook', resume:'Analyzed financial data using statistical reasoning and documented model assumptions and risk.'}
+};
+const SECTION_TO_SKILL = {'Arithmetic':'rates, unit conversions, and practical number sense','Algebra':'equations, functions, and formulas used in code and analytics','Logic & Binary':'Boolean logic, binary, and condition-based thinking','Statistics':'averages, variation, probability, and evidence-based decisions','Derivatives':'change, optimization, and model improvement','Integrals':'accumulation, area, and continuous change','Applied CS Math':'algorithms, complexity, and computational reasoning'};
+function safeGet(key, fallback){try{return JSON.parse(localStorage.getItem(key)||JSON.stringify(fallback));}catch(e){return fallback;}}
+function saveObj(key, value){localStorage.setItem(key, JSON.stringify(value));}
+function extraFor(c){return CAREER_EXTRA[c.id] || {likes:'problem-solving, learning new tools, and building useful technology', first:'Complete one small project and explain what it demonstrates.', project:'Role-focused portfolio project', resume:'Built a practical technology project and documented the skills used.'};}
+function getFavoriteIds(){return safeGet('gradient.savedCareers', []);}
+function setFavoriteIds(ids){saveObj('gradient.savedCareers', [...new Set(ids)]); renderDashboard();}
+function toggleFavorite(id, event){ if(event){event.stopPropagation();} const ids=getFavoriteIds(); const next=ids.includes(id)?ids.filter(x=>x!==id):ids.concat(id); setFavoriteIds(next); renderCards(window.__lastCareerList || CAREERS); renderDashboard(); }
+function isFavorite(id){return getFavoriteIds().includes(id);}
+function selectOnboardingGoal(goal){localStorage.setItem('gradient.quickGoal', goal);const quick=document.getElementById('quickGoal'); if(quick){quick.value=goal; updateQuickGoal();}document.querySelectorAll('.onboard-card').forEach(c=>c.classList.toggle('active', c.dataset.goal===goal));renderDashboard();const target = goal==='career' ? '#career-match' : goal==='math' ? '#math-test' : goal==='portfolio' ? '#learning-studio' : '#dashboard';const el=document.querySelector(target); if(el) el.scrollIntoView({behavior:'smooth', block:'start'});}
+function careerSkillGaps(c){if(!c) return [];const gaps=[];if(c.type==='high') gaps.push(['Math focus','Build confidence in '+(((c.tags||[]).filter(t=>t!=='none').join(', ')) || 'advanced math')+'.']);if((c.radar?.communication||0)<55) gaps.push(['Communication','Practice explaining technical choices in plain language.']);if((c.radar?.analysis||0)>65) gaps.push(['Analysis','Practice interpreting data, logs, or evidence before recommending action.']);if((c.radar?.security||0)>60) gaps.push(['Security','Learn risk, access control, incident response, and secure configuration basics.']);if((c.radar?.networking||0)>60) gaps.push(['Networking','Strengthen TCP/IP, DNS, routing, and troubleshooting concepts.']);if(!gaps.length) gaps.push(['Project proof','Build one small artifact that demonstrates your strongest role skill.']);return gaps.slice(0,3);}
+function enhancedCardHTML(c, compact=false){const e=extraFor(c); const fav=isFavorite(c.id);return `<div class="career-extra"><span><b>Best for:</b> ${e.likes}</span><span><b>Try first:</b> ${e.first}</span>${compact?'':`<span><b>Project:</b> ${e.project}</span>`}</div><button class="fav-btn ${fav?'saved':''}" onclick="toggleFavorite('${c.id}', event)">${fav?'★ Saved':'☆ Save career'}</button>`;}
+const __oldRenderCards = renderCards; renderCards = function(list){window.__lastCareerList = list;const g = document.getElementById('cgrid');if(!g) return;g.innerHTML = '';list.forEach(c => {const el = document.createElement('div');el.className = `cc ${c.type}`;el.innerHTML = `<div class="cm"><span class="ctag ${c.type==='low'?'tl':'th'}">${c.type==='low'?'🔵 Low Math':'🟡 High Math'}</span><span class="ccode">O*NET ${c.onet}</span></div><div class="ctitle">${c.title}</div><div class="cdesc">${c.desc.substring(0,125)}...</div><div class="cchips">${c.tags.map(t=>`<span class="chip ${t==='none'?'chn':'chm'}">${t==='none'?'✓ Minimal Math':t.charAt(0).toUpperCase()+t.slice(1)}</span>`).join('')}</div>${enhancedCardHTML(c)}<div class="cstats"><div class="cst"><label>Median Salary</label><span class="sv svg">${c.salary}</span></div><div class="cst"><label>Math Intensity</label><div class="bar"><div class="bf ${c.type==='low'?'bfl':'bfh'}" style="width:${c.mathLevel}%"></div></div></div></div>`;el.onclick = () => openMod(c);g.appendChild(el);});};
+const __oldGenResults = genResults; genResults = function(){const { edu, major, math, interests } = Q;const scored = CAREERS.map(c => {let score = 0;const diff = Math.abs(math * 10 - c.mathLevel);if (diff <= 15) score += 40; else if (diff <= 30) score += 22; else if (diff <= 50) score += 8;if (c.eduLevels.includes(edu)) score += 20;const majMatch = c.majors && c.majors.some(m => major.includes(m.split(' ')[0].toLowerCase()) || m.toLowerCase().includes((major.split(' ')[0]||'')));if (majMatch) score += 25;const intMatch = interests.filter(i => c.interests.includes(i)).length;score += intMatch * 9;return { ...c, score };}).sort((a, b) => b.score - a.score).slice(0, 6);saveObj('gradient.matchResults', {date:new Date().toISOString(), q:{edu,major,math,interests}, matches:scored.map(c=>c.id)});document.getElementById('resTitle').textContent = 'Your Best-Fit Tech Careers';document.getElementById('resSub').textContent = `Matched to your ${edu} background, ${major || 'your field'}, math comfort ${math}/10, and interests. Use the dashboard to turn this into a learning plan.`;const grid = document.getElementById('recGrid'); grid.innerHTML = '';scored.forEach((c, i) => {const isTop = i === 0;const tier = isTop ? 'rt feature-match' : i <= 2 ? 'rg' : 'ro';const scCls = isTop ? 'sc-t' : i <= 2 ? 'sc-g' : 'sc-o';const why = buildWhy(c, Q);const el = document.createElement('div');el.className = `rc ${tier}`;const topBadge = isTop ? `<div class="feature-badge">Top Match</div>` : '';const matchLabel = isTop ? '<span class="rc-score sc-t">✦ Best Fit</span>' : `<span class="rc-score ${scCls}">${i <= 2 ? '✓ Strong' : '~ Good'}</span>`;const gaps = careerSkillGaps(c).map(g=>`<span><b>${g[0]}:</b> ${g[1]}</span>`).join('');el.innerHTML = `${matchLabel}${topBadge}<div class="rc-title">${c.title}</div><div class="rc-onet">O*NET ${c.onet}</div><div class="rc-why">${why}</div><div class="career-extra">${gaps}</div><div class="rc-foot"><span class="rc-sal">${c.salary}/yr</span><span class="ctag ${c.type==='low'?'tl':'th'}">${c.type==='low'?'Low Math':'High Math'}</span></div>${enhancedCardHTML(c,true)}`;el.onclick = () => openMod(c);grid.appendChild(el);});for (let i = 0; i < 4; i++) { const s = document.getElementById('qs' + i); if (s) s.classList.remove('on'); }document.getElementById('resWrap').classList.add('show');document.querySelector('.qprog').style.visibility = 'hidden';renderDashboard();};
+const __oldOpenMod = openMod; openMod = function(c){__oldOpenMod(c);setTimeout(()=>{const inner=document.getElementById('mInner'); if(!inner) return;const e=extraFor(c);const gaps=careerSkillGaps(c).map(g=>`<div class="gap-row"><strong>${g[0]}</strong><span>${g[1]}</span></div>`).join('');const block=document.createElement('div');block.className='skill-gap-box';block.innerHTML=`<h4>Personal learning angle</h4><div class="gap-row"><strong>Best for students who like</strong><span>${e.likes}</span></div><div class="gap-row"><strong>Beginner project</strong><span>${e.project}</span></div><div class="gap-row"><strong>Resume proof</strong><span>${e.resume}</span></div><h4 style="margin-top:var(--f5)">Skill gaps to check</h4>${gaps}<button class="fav-btn ${isFavorite(c.id)?'saved':''}" onclick="toggleFavorite('${c.id}', event)">${isFavorite(c.id)?'★ Saved':'☆ Save career'}</button>`;inner.appendChild(block);},0);};
+const __oldShowMTResults = showMTResults; showMTResults = function(){__oldShowMTResults();const score = mtState.answers.filter(a=>a.correct).length;const total = MT_QUESTIONS.length;const sections = getSectionScores();const weakest = sections.filter(s=>s.total>0).sort((a,b)=>a.pct-b.pct)[0];saveObj('gradient.mathResults', {date:new Date().toISOString(), score,total,sections,weakest});setTimeout(()=>{const next=document.getElementById('mtrNextSteps');if(next && weakest){const skill = SECTION_TO_SKILL[weakest.section] || weakest.section;next.innerHTML += `<div class="skill-gap-box"><h4>Career-connected math feedback</h4><div class="gap-row"><strong>Strongest use</strong><span>Your score helps Gradient match you to roles where your current math level is useful now.</span></div><div class="gap-row"><strong>Highest-value gap</strong><span>${weakest.section}: focus on ${skill} next.</span></div><div class="gap-row"><strong>Why it matters</strong><span>This skill appears in real tech work through debugging, analytics, security reasoning, systems planning, or model evaluation.</span></div></div>`;}renderDashboard();}, 200);};
+function renderDashboard(){const goal = localStorage.getItem('gradient.quickGoal') || 'career';document.querySelectorAll('.onboard-card').forEach(c=>c.classList.toggle('active', c.dataset.goal===goal));const match=safeGet('gradient.matchResults', null);const math=safeGet('gradient.mathResults', null);const studio=safeGet('gradient.studioDraft', null);const favIds=getFavoriteIds();const top = match && match.matches && CAREERS.find(c=>c.id===match.matches[0]);const dashCareer=document.getElementById('dashCareer');const dashCareerText=document.getElementById('dashCareerText');const dashCareerBadges=document.getElementById('dashCareerBadges');if(dashCareer){ dashCareer.textContent = top ? top.title : 'Not matched yet'; }if(dashCareerText){ dashCareerText.textContent = top ? `${extraFor(top).likes.charAt(0).toUpperCase()+extraFor(top).likes.slice(1)}. First project: ${extraFor(top).project}.` : 'Take the Career Matcher to see your best-fit role, why it fits, and what to learn next.'; }if(dashCareerBadges){ dashCareerBadges.innerHTML = top ? `<span class="dash-badge">${top.type==='low'?'Low Math':'High Math'}</span><span class="dash-badge">${top.salary}/yr</span><span class="dash-badge">${top.outlook}</span>` : ''; }const dashMath=document.getElementById('dashMath');const dashMathText=document.getElementById('dashMathText');if(dashMath){ dashMath.textContent = math ? `${math.score}/${math.total}` : 'Not tested yet'; }if(dashMathText){ dashMathText.textContent = math && math.weakest ? `Highest-value practice area: ${math.weakest.section}. Focus on ${SECTION_TO_SKILL[math.weakest.section] || 'this topic'} next.` : 'Take the Math Test to connect your score to career options and next skills.'; }const skill = math?.weakest?.section || (top ? careerSkillGaps(top)[0][0] : null);const dashSkill=document.getElementById('dashSkill');const dashSkillText=document.getElementById('dashSkillText');if(dashSkill){ dashSkill.textContent = skill || (goal==='portfolio'?'Portfolio proof':'Choose a goal'); }if(dashSkillText){ dashSkillText.textContent = math?.weakest ? `Practice ${SECTION_TO_SKILL[math.weakest.section] || math.weakest.section}, then apply it in a small project.` : top ? careerSkillGaps(top)[0][1] : (goalMessages[goal]?.replace(/<[^>]*>/g,'') || 'Gradient will recommend one focused skill so learning feels manageable.'); }const dashWeekly=document.getElementById('dashWeekly');const dashWeeklyText=document.getElementById('dashWeeklyText');if(dashWeekly){ dashWeekly.textContent = studio ? `${studio.role || 'Saved'} plan` : 'No plan saved'; }if(dashWeeklyText){ dashWeeklyText.textContent = studio ? `${studio.time || 4}+ hours/week · ${studio.style || 'hands-on'} learning · ${studio.level || 'building'} level.` : 'Use the Personal Learning Studio to save a weekly plan.'; }const checklist=document.getElementById('dashChecklist');if(checklist){const items=[['Choose a goal',!!goal],['Complete career matcher',!!top],['Take math readiness test',!!math],['Save a weekly learning plan',!!studio],['Save at least one career',favIds.length>0]];checklist.innerHTML=items.map(([t,d])=>`<div class="progress-item ${d?'done':''}"><span class="progress-dot">${d?'✓':''}</span><span>${t}</span></div>`).join('');}const saved=document.getElementById('savedCareers');if(saved){const favs=favIds.map(id=>CAREERS.find(c=>c.id===id)).filter(Boolean);saved.innerHTML = favs.length ? favs.map(c=>`<div class="saved-career"><div><strong>${c.title}</strong><small>${c.salary}/yr · ${c.type==='low'?'Low Math':'High Math'}</small></div><button onclick="toggleFavorite('${c.id}', event)" aria-label="Remove ${c.title}">×</button></div>`).join('') : '<p>No saved careers yet. Use ☆ Save career on any career card.</p>'; }const snap=document.getElementById('jobSnapshot');const role=top || (favIds[0] && CAREERS.find(c=>c.id===favIds[0]));if(snap){const e=role?extraFor(role):null;snap.innerHTML = e ? `<ul><li><strong>Resume:</strong> ${e.resume}</li><li><strong>Project:</strong> ${e.project}</li><li><strong>Interview:</strong> Explain the problem, your decisions, result, and next improvement.</li></ul>` : '<p>Complete the matcher or save a career to generate a readiness snapshot.</p>'; }updateReadinessCopy(role);}
+function updateReadinessCopy(c){const e=c?extraFor(c):null;const set=(id,txt)=>{const el=document.getElementById(id); if(el) el.textContent=txt;};if(!e) return;set('resumeLine', e.resume);set('portfolioLine', e.project + '. Keep screenshots, notes, and a short explanation of your choices.');set('interviewLine', `For ${c.title}, explain why you chose the tools, what tradeoff you made, and how you would improve the project.`);set('applyLine', `Before applying, be ready to explain ${c.coreSkills.slice(0,3).join(', ')} and show one project connected to the role.`);}
+const __oldBuildStudioPlan = buildStudioPlan; buildStudioPlan = function(){ __oldBuildStudioPlan(); renderDashboard(); };
+const __oldSaveStudioPlan = saveStudioPlan; saveStudioPlan = function(){ __oldSaveStudioPlan(); renderDashboard(); };
+function hydratePlatformV2(){renderDashboard();renderCards(CAREERS);} if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', hydratePlatformV2); else hydratePlatformV2();
+</script>
+
 </body>
 </html>
